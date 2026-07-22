@@ -1,0 +1,43 @@
+// WXS 格式化工具 - 在 WXML 中使用
+var formatMarketCap = function(val) {
+  if (val >= 100000000) {
+    return (val / 100000000).toFixed(1) + '亿'
+  }
+  if (val >= 10000) {
+    return (val / 10000).toFixed(1) + '万'
+  }
+  return val + ''
+}
+
+var formatVolume = function(val) {
+  if (val >= 100000000) {
+    return (val / 100000000).toFixed(1) + '亿'
+  }
+  if (val >= 10000) {
+    return (val / 10000).toFixed(1) + '万'
+  }
+  return val + ''
+}
+
+var formatPrice = function(val) {
+  if (!val) return '--'
+  return val.toFixed(2)
+}
+
+var getLast = function(arr) {
+  if (!arr || arr.length === 0) return null
+  return arr[arr.length - 1]
+}
+
+var formatNum = function(val, digits) {
+  if (!val) return '--'
+  return val.toFixed(digits || 2)
+}
+
+module.exports = {
+  formatMarketCap: formatMarketCap,
+  formatVolume: formatVolume,
+  formatPrice: formatPrice,
+  getLast: getLast,
+  formatNum: formatNum
+}

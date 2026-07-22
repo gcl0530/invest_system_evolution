@@ -1,0 +1,222 @@
+/* pages/fund/fund.wxss */
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+  background-color: #1a1a2e;
+  border-bottom: 1rpx solid #2a2a4a;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #e8e8f0;
+}
+
+.header-action {
+  padding: 8rpx;
+}
+
+/* 搜索面板 */
+.search-panel {
+  background-color: #1a1a2e;
+  border-bottom: 1rpx solid #2a2a4a;
+}
+
+.search-results {
+  max-height: 600rpx;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #2a2a4a;
+}
+
+.result-name {
+  font-size: 28rpx;
+  color: #e8e8f0;
+  font-weight: 500;
+}
+
+.result-code {
+  font-size: 22rpx;
+  color: #8a8aa0;
+  margin-top: 4rpx;
+}
+
+/* 关注列表 */
+.watchlist {
+  padding-bottom: 120rpx;
+}
+
+.watchlist-item {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.fund-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #e8e8f0;
+}
+
+.fund-code {
+  font-size: 22rpx;
+  color: #8a8aa0;
+  margin-top: 4rpx;
+}
+
+.fund-nav {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #e8e8f0;
+}
+
+.fund-date {
+  font-size: 20rpx;
+  color: #5a5a70;
+  margin-top: 4rpx;
+}
+
+/* 涨跌数据条 */
+.fund-stats {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-top: 16rpx;
+  border-top: 1rpx dashed #2a2a4a;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.stat-label {
+  font-size: 20rpx;
+  color: #5a5a70;
+}
+
+.stat-value {
+  font-size: 24rpx;
+  color: #e8e8f0;
+}
+
+/* 详情视图 */
+.detail-view {
+  padding-bottom: 120rpx;
+}
+
+.detail-header {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.detail-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #e8e8f0;
+}
+
+.detail-code {
+  font-size: 22rpx;
+  color: #8a8aa0;
+  margin-top: 4rpx;
+}
+
+.detail-price-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.detail-nav {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #e8e8f0;
+}
+
+.detail-date {
+  font-size: 20rpx;
+  color: #5a5a70;
+  margin-top: 4rpx;
+}
+
+.detail-change {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+/* 周期栏 */
+.period-bar {
+  display: flex;
+  flex-direction: row;
+  padding: 16rpx 32rpx;
+  gap: 16rpx;
+}
+
+.period-tab {
+  padding: 8rpx 24rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  color: #8a8aa0;
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.period-tab.active {
+  color: #fff;
+  background-color: #e94560;
+}
+
+/* 指标数据 */
+.indicator-data {
+  margin-top: 24rpx;
+}
+
+.indicator-section {
+  padding: 12rpx 0;
+}
+
+.indicator-section-title {
+  font-size: 24rpx;
+  color: #8a8aa0;
+  margin-bottom: 12rpx;
+}
+
+.indicator-grid {
+  display: flex;
+  flex-direction: row;
+  gap: 16rpx;
+  flex-wrap: wrap;
+}
+
+.indicator-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 25%;
+  padding: 12rpx;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 8rpx;
+}
+
+.indicator-cell-label {
+  font-size: 20rpx;
+  margin-bottom: 4rpx;
+}
+
+.indicator-cell-value {
+  font-size: 26rpx;
+  color: #e8e8f0;
+  font-weight: 500;
+}

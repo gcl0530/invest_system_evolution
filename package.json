@@ -1,0 +1,8 @@
+{
+  "name": "invest-miniprogram",
+  "version": "1.0.0",
+  "description": "投资助手微信小程序",
+  "dependencies": {
+    "tdesign-miniprogram": "^1.15.3"
+  }
+}

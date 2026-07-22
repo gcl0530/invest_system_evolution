@@ -1,0 +1,9 @@
+// WXS 格式化工具 - strategy 页面
+var formatNum = function(val, digits) {
+  if (!val) return '--'
+  return val.toFixed(digits || 2)
+}
+
+module.exports = {
+  formatNum: formatNum
+}

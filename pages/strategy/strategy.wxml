@@ -1,0 +1,241 @@
+<wxs src="strategy.wxs" module="fmt" />
+
+<view class="container">
+  <!-- Tab 栏 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'list' ? 'active' : ''}}" data-value="list" bindtap="onTabChange">策略列表</view>
+    <view class="tab-item {{activeTab === 'create' ? 'active' : ''}}" data-value="create" bindtap="onTabChange">创建策略</view>
+    <view class="tab-item {{activeTab === 'pyramid' ? 'active' : ''}}" data-value="pyramid" bindtap="onTabChange">金字塔加仓</view>
+  </view>
+
+  <!-- ===== 策略列表 ===== -->
+  <view class="tab-content" wx:if="{{activeTab === 'list'}}">
+    <!-- 提醒记录 -->
+    <view class="alert-section" wx:if="{{alerts.length > 0}}">
+      <t-notice-bar theme="error" content="有新的策略触发提醒，请查看" />
+      <view class="alert-list">
+        <view class="alert-item card" wx:for="{{alerts}}" wx:key="id">
+          <view class="flex-row justify-between">
+            <text class="alert-title">{{item.strategyName}}</text>
+            <text class="alert-time">{{item.timestamp}}</text>
+          </view>
+          <text class="alert-msg">{{item.message}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 策略卡片 -->
+    <view class="strategy-list">
+      <view class="strategy-card card" wx:for="{{strategies}}" wx:key="id">
+        <view class="flex-row justify-between items-center">
+          <view class="flex-col" style="flex: 1;">
+            <view class="flex-row items-center gap-sm">
+              <text class="strategy-name">{{item.name}}</text>
+              <view class="indicator-tag {{item.enabled ? 'tag-up' : 'tag-flat'}}">
+                {{item.enabled ? '运行中' : '已暂停'}}
+              </view>
+            </view>
+            <text class="strategy-code">{{item.targetCode}} · {{item.targetType === 'stock' ? '股票' : '基金'}}</text>
+          </view>
+          <t-switch checked="{{item.enabled}}" data-id="{{item.id}}" bind:change="toggleStrategy" />
+        </view>
+        
+        <view class="strategy-conditions">
+          <text class="conditions-label">触发条件（{{item.conditions.length}}个）</text>
+          <view class="condition-tags">
+            <view class="condition-tag" wx:for="{{item.conditions}}" wx:for-item="cond" wx:key="id">
+              {{cond.type === 'price_cross_ma' ? '均线交叉' : cond.type === 'macd_cross' ? 'MACD' : cond.type === 'boll_breakout' ? '布林带' : cond.type === 'rsi_over' ? 'RSI' : cond.type === 'volume_surge' ? '放量' : '目标价'}}
+              · {{cond.action === 'buy' ? '买' : cond.action === 'sell' ? '卖' : '提醒'}}
+            </view>
+          </view>
+        </view>
+        
+        <view class="strategy-stats">
+          <view class="stat-item">
+            <text class="stat-label">资金</text>
+            <text class="stat-value font-num">{{item.formattedCapital}}</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">金字塔</text>
+            <text class="stat-value">{{item.pyramidEnabled ? '启用' : '未用'}}</text>
+          </view>
+        </view>
+        
+        <view class="strategy-actions">
+          <t-button theme="primary" size="small" variant="outline" data-id="{{item.id}}" bindtap="simulateCheck">检查触发</t-button>
+          <t-button theme="danger" size="small" variant="outline" data-id="{{item.id}}" bindtap="deleteStrategy">删除</t-button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{strategies.length === 0}}" style="padding: 120rpx 0;">
+      <t-icon name="add" size="80rpx" color="#5a5a70" />
+      <text style="margin-top: 20rpx;">点击"创建策略"开始设计你的交易策略</text>
+    </view>
+  </view>
+
+  <!-- ===== 创建策略 ===== -->
+  <view class="tab-content" wx:if="{{activeTab === 'create'}}">
+    <view class="form-section card">
+      <!-- 基本信息 -->
+      <view class="form-group">
+        <text class="form-label">策略名称</text>
+        <t-input placeholder="如：茅台均线策略" value="{{formData.name}}" bind:change="onNameInput" />
+      </view>
+      
+      <view class="form-group">
+        <text class="form-label">标的代码</text>
+        <t-input placeholder="如：600519" value="{{formData.targetCode}}" bind:change="onCodeInput" />
+      </view>
+      
+      <view class="form-group">
+        <text class="form-label">标的类型</text>
+        <view class="type-selector">
+          <view class="type-option {{formData.targetType === 'stock' ? 'active' : ''}}" data-value="stock" bindtap="onTypeChange">股票</view>
+          <view class="type-option {{formData.targetType === 'fund' ? 'active' : ''}}" data-value="fund" bindtap="onTypeChange">基金</view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">投入资金（元）</text>
+        <t-input type="number" placeholder="100000" value="{{formData.capital}}" bind:change="onCapitalInput" />
+      </view>
+
+      <view class="form-group">
+        <view class="flex-row justify-between items-center">
+          <text class="form-label">启用金字塔加仓</text>
+          <t-switch checked="{{formData.pyramidEnabled}}" bind:change="onPyramidToggle" />
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <!-- 条件列表 -->
+      <view class="form-group">
+        <view class="flex-row justify-between items-center">
+          <text class="form-label">触发条件</text>
+          <t-picker
+            value="{{0}}"
+            options="{{conditionTypes}}"
+            bind:change="onConditionTypeChange"
+          >
+            <t-button size="small" variant="outline" theme="primary">添加条件</t-button>
+          </t-picker>
+        </view>
+        
+        <view class="condition-list">
+          <view class="condition-item" wx:for="{{formData.conditions}}" wx:key="id">
+            <view class="condition-header">
+              <text class="condition-title">
+                {{item.type === 'price_cross_ma' ? '均线交叉' : item.type === 'macd_cross' ? 'MACD金叉/死叉' : item.type === 'boll_breakout' ? '布林带突破' : item.type === 'rsi_over' ? 'RSI超买超卖' : item.type === 'volume_surge' ? '放量' : '目标价格'}}
+              </text>
+              <t-icon name="close" size="32rpx" color="#5a5a70" data-id="{{item.id}}" bindtap="removeCondition" />
+            </view>
+            
+            <view class="condition-config">
+              <view class="config-row">
+                <text class="config-label">方向</text>
+                <t-input value="{{item.direction}}" data-id="{{item.id}}" bind:change="onConditionDirectionChange" placeholder="up/down/golden/death/overbought/oversold" />
+              </view>
+              <view class="config-row">
+                <text class="config-label">操作</text>
+                <t-input value="{{item.action}}" data-id="{{item.id}}" bind:change="onConditionActionChange" placeholder="notify/buy/sell" />
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 保存按钮 -->
+      <t-button theme="primary" size="large" block bindtap="saveStrategy" style="margin-top: 32rpx;">保存策略</t-button>
+    </view>
+  </view>
+
+  <!-- ===== 金字塔加仓 ===== -->
+  <view class="tab-content" wx:if="{{activeTab === 'pyramid'}}">
+    <!-- 金字塔可视化 -->
+    <view class="pyramid-visual card">
+      <view class="section-title" style="padding: 0 0 24rpx;">金字塔加仓计划</view>
+      
+      <view class="pyramid-diagram">
+        <!-- 从底部到顶部展示 -->
+        <block wx:for="{{pyramidPlan.plan}}" wx:key="level">
+          <view class="pyramid-layer" style="width: {{100 - (item.level - 1) * 18}}%; opacity: {{item.executed ? 1 : 0.5}};">
+            <view class="layer-content">
+              <view class="layer-label">第{{item.level}}层 · {{item.label}}</view>
+              <view class="layer-details">
+                <text class="layer-ratio">{{item.ratio * 100}}%</text>
+                <text class="layer-shares font-num">{{item.shares}}股</text>
+                <text class="layer-capital font-num">¥{{item.actualCapital}}</text>
+              </view>
+              <view class="layer-status">
+                {{item.executed ? '✓ 已执行' : '待执行'}}
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 统计数据 -->
+    <view class="pyramid-stats card" wx:if="{{pyramidPlan}}">
+      <view class="section-title" style="padding: 0 0 16rpx;">持仓统计</view>
+      <view class="stats-grid">
+        <view class="stat-box">
+          <text class="stat-box-label">总持仓</text>
+          <text class="stat-box-value font-num">{{pyramidPlan.totalShares}}股</text>
+        </view>
+        <view class="stat-box">
+          <text class="stat-box-label">总投入</text>
+          <text class="stat-box-value font-num">¥{{pyramidPlan.totalInvested}}</text>
+        </view>
+        <view class="stat-box">
+          <text class="stat-box-label">平均成本</text>
+          <text class="stat-box-value font-num">{{fmt.formatNum(pyramidPlan.avgCost, 2)}}</text>
+        </view>
+        <view class="stat-box">
+          <text class="stat-box-label">止损价</text>
+          <text class="stat-box-value font-num text-down">{{fmt.formatNum(pyramidPlan.stopLossPrice, 2)}}</text>
+        </view>
+        <view class="stat-box">
+          <text class="stat-box-label">止盈价</text>
+          <text class="stat-box-value font-num text-up">{{fmt.formatNum(pyramidPlan.takeProfitPrice, 2)}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 金字塔配置 -->
+    <view class="pyramid-config card">
+      <view class="section-title" style="padding: 0 0 16rpx;">金字塔配置</view>
+      
+      <view class="config-item">
+        <text class="config-item-label">止损比例</text>
+        <view class="config-item-control">
+          <t-stepper value="{{pyramidConfig.stopLossRatio * 100 * -1}}" step="1" min="1" max="20" bind:change="onStopLossChange" />
+          <text class="config-unit">%</text>
+        </view>
+      </view>
+      
+      <view class="config-item">
+        <text class="config-item-label">止盈比例</text>
+        <view class="config-item-control">
+          <t-stepper value="{{pyramidConfig.takeProfitRatio * 100}}" step="1" min="5" max="50" bind:change="onTakeProfitChange" />
+          <text class="config-unit">%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 金字塔原则说明 -->
+    <view class="pyramid-principle card">
+      <view class="section-title" style="padding: 0 0 16rpx;">金字塔加仓原则</view>
+      <view class="principle-content">
+        <text class="principle-text">1. 逐层加仓，每层数量递增，降低平均成本</text>
+        <text class="principle-text">2. 只在趋势确认后加仓，逆势不加仓</text>
+        <text class="principle-text">3. 加仓间距要有节奏，避免密集加仓</text>
+        <text class="principle-text">4. 总仓位不超过预设上限，保留机动资金</text>
+        <text class="principle-text">5. 严格执行止损，到达止损位坚决离场</text>
+      </view>
+    </view>
+  </view>
+</view>

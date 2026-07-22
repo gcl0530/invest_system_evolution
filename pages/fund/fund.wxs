@@ -1,0 +1,15 @@
+// WXS 格式化工具 - fund 页面
+var getLast = function(arr) {
+  if (!arr || arr.length === 0) return null
+  return arr[arr.length - 1]
+}
+
+var formatNum = function(val, digits) {
+  if (!val) return '--'
+  return val.toFixed(digits || 2)
+}
+
+module.exports = {
+  getLast: getLast,
+  formatNum: formatNum
+}

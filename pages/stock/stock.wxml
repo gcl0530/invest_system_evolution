@@ -1,0 +1,288 @@
+<wxs src="stock.wxs" module="fmt" />
+
+<view class="container">
+  <!-- 顶部栏 -->
+  <view class="header">
+    <view class="header-title">股票关注</view>
+    <view class="header-action" bindtap="toggleSearch">
+      <t-icon name="search" size="40rpx" />
+    </view>
+  </view>
+
+  <!-- 搜索弹层 -->
+  <view class="search-panel" wx:if="{{showSearch}}">
+    <t-search
+      value="{{searchValue}}"
+      placeholder="搜索股票名称/代码"
+      bind:change="onSearchInput"
+    />
+    <view class="search-results">
+      <view 
+        class="search-result-item" 
+        wx:for="{{searchResults}}" 
+        wx:key="code"
+        data-code="{{item.code}}"
+        bindtap="addToWatchlist"
+      >
+        <view class="flex-row items-center justify-between">
+          <view class="flex-col">
+            <text class="result-name">{{item.name}}</text>
+            <text class="result-code">{{item.code}} · {{item.industry}}</text>
+          </view>
+          <t-icon name="add" size="36rpx" color="#e94560" />
+        </view>
+      </view>
+      <view class="empty-state" wx:if="{{searchValue && searchResults.length === 0}}">
+        <text>未找到相关股票</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 关注列表 -->
+  <view class="watchlist" wx:if="{{!currentStock}}">
+    <view class="section-title">我的关注（{{watchlist.length}}）</view>
+    
+    <view 
+      class="watchlist-item card" 
+      wx:for="{{watchlist}}" 
+      wx:key="code"
+      data-code="{{item.code}}"
+      bindtap="selectStock"
+    >
+      <view class="flex-row justify-between items-center">
+        <view class="flex-col" style="flex: 1;">
+          <view class="flex-row items-center gap-sm">
+            <text class="stock-name">{{item.name}}</text>
+            <view class="indicator-tag {{item.changePercent > 0 ? 'tag-up' : 'tag-down'}}">
+              {{item.formattedChange}}
+            </view>
+          </view>
+          <text class="stock-code">{{item.code}} · {{item.industry}}</text>
+        </view>
+        <view class="flex-col" style="align-items: flex-end;">
+          <text class="stock-price font-num">{{item.formattedPrice}}</text>
+          <text class="stock-change font-num {{item.changePercent > 0 ? 'text-up' : 'text-down'}}">
+            {{item.change > 0 ? '+' : ''}}{{item.change}}
+          </text>
+        </view>
+      </view>
+      
+      <!-- 行情数据 -->
+      <view class="stock-stats">
+        <view class="stat-item">
+          <text class="stat-label">成交</text>
+          <text class="stat-value font-num">{{item.formattedVolume}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">金额</text>
+          <text class="stat-value font-num">{{item.formattedAmount}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">PE</text>
+          <text class="stat-value font-num">{{item.pe}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">PB</text>
+          <text class="stat-value font-num">{{item.pb}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{watchlist.length === 0}}" style="padding: 120rpx 0;">
+      <t-icon name="add" size="80rpx" color="#5a5a70" />
+      <text style="margin-top: 20rpx;">点击右上角搜索添加股票</text>
+    </view>
+  </view>
+
+  <!-- 股票详情 -->
+  <view class="detail-view" wx:if="{{currentStock && stockDetail}}">
+    <!-- 详情头部 -->
+    <view class="detail-header card">
+      <view class="flex-row justify-between items-center">
+        <view class="flex-col">
+          <text class="detail-name">{{currentStock.name}}</text>
+          <text class="detail-code">{{currentStock.code}} · {{currentStock.industry}}</text>
+        </view>
+        <view class="flex-row gap-sm">
+          <t-button theme="primary" size="small" variant="outline" bindtap="closeDetail">返回</t-button>
+          <t-button theme="danger" size="small" variant="outline" data-code="{{currentStock.code}}" bindtap="removeFromWatchlist">取消关注</t-button>
+        </view>
+      </view>
+      
+      <!-- 价格信息 -->
+      <view class="detail-price-row">
+        <view class="flex-col">
+          <text class="detail-price font-num">{{currentStock.price}}</text>
+          <view class="flex-row gap-sm" style="margin-top: 8rpx;">
+            <text class="detail-change-val font-num {{currentStock.changePercent > 0 ? 'text-up' : 'text-down'}}">
+              {{currentStock.change > 0 ? '+' : ''}}{{currentStock.change}}
+            </text>
+            <text class="detail-change-pct font-num {{currentStock.changePercent > 0 ? 'text-up' : 'text-down'}}">
+              ({{currentStock.changePercent > 0 ? '+' : ''}}{{currentStock.changePercent}}%)
+            </text>
+          </view>
+        </view>
+        <view class="detail-ohlc">
+          <view class="ohlc-row">
+            <text class="ohlc-label">开</text>
+            <text class="ohlc-val font-num">{{currentStock.open}}</text>
+          </view>
+          <view class="ohlc-row">
+            <text class="ohlc-label">高</text>
+            <text class="ohlc-val font-num text-up">{{currentStock.high}}</text>
+          </view>
+          <view class="ohlc-row">
+            <text class="ohlc-label">低</text>
+            <text class="ohlc-val font-num text-down">{{currentStock.low}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 估值指标 -->
+      <view class="valuation-grid">
+        <view class="val-cell">
+          <text class="val-label">PE(TTM)</text>
+          <text class="val-value font-num">{{currentStock.pe}}</text>
+        </view>
+        <view class="val-cell">
+          <text class="val-label">PB</text>
+          <text class="val-value font-num">{{currentStock.pb}}</text>
+        </view>
+        <view class="val-cell">
+          <text class="val-label">市值</text>
+          <text class="val-value font-num">{{fmt.formatMarketCap(currentStock.marketCap)}}</text>
+        </view>
+        <view class="val-cell">
+          <text class="val-label">成交</text>
+          <text class="val-value font-num">{{fmt.formatVolume(currentStock.volume)}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 周期选择 -->
+    <view class="period-bar">
+      <view 
+        class="period-tab {{period === item ? 'active' : ''}}" 
+        wx:for="{{['日K', '周K', '月K']}}" 
+        wx:key="*this"
+        data-value="{{item}}"
+        bindtap="onPeriodChange"
+      >{{item}}</view>
+    </view>
+
+    <!-- K 线图 -->
+    <kline-chart
+      klineData="{{stockDetail.kline}}"
+      indicators="{{stockDetail.indicators}}"
+      showMA="{{true}}"
+      showBOLL="{{true}}"
+      showMACD="{{true}}"
+      showVolume="{{true}}"
+      showRSI="{{true}}"
+    />
+
+    <!-- 指标数据表 -->
+    <view class="indicator-data card">
+      <view class="section-title" style="padding: 0 0 16rpx;">技术指标</view>
+      
+      <!-- 均线 -->
+      <view class="indicator-section">
+        <view class="indicator-section-title">均线</view>
+        <view class="indicator-grid">
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #ffa726;">MA5</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma5), 2)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #42a5f5;">MA10</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma10), 2)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #66bb6a;">MA20</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma20), 2)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #ab47bc;">MA60</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma60), 2)}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <!-- 布林带 -->
+      <view class="indicator-section">
+        <view class="indicator-section-title">布林带</view>
+        <view class="indicator-grid">
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #ef5350;">上轨</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.boll.upper), 2)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #78909c;">中轨</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.boll.mid), 2)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #26a69a;">下轨</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.boll.lower), 2)}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <!-- MACD -->
+      <view class="indicator-section">
+        <view class="indicator-section-title">MACD</view>
+        <view class="indicator-grid">
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #42a5f5;">DIF</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.macd.dif), 4)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #ffa726;">DEA</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.macd.dea), 4)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label">柱</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.macd.histogram), 4)}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <!-- RSI -->
+      <view class="indicator-section">
+        <view class="indicator-section-title">RSI</view>
+        <view class="indicator-grid">
+          <view class="indicator-cell">
+            <text class="indicator-cell-label">RSI(14)</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.rsi), 2)}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <!-- KDJ -->
+      <view class="indicator-section">
+        <view class="indicator-section-title">KDJ</view>
+        <view class="indicator-grid">
+          <view class="indicator-cell">
+            <text class="indicator-cell-label">K</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.kdj.k), 2)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label">D</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.kdj.d), 2)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label">J</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.kdj.j), 2)}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

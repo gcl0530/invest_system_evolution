@@ -1,0 +1,50 @@
+{
+  "pages": [
+    "pages/fund/fund",
+    "pages/stock/stock",
+    "pages/strategy/strategy",
+    "pages/philosophy/philosophy"
+  ],
+  "window": {
+    "navigationBarTitleText": "投资助手",
+    "navigationBarBackgroundColor": "#1a1a2e",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#0f0f1e",
+    "backgroundTextStyle": "light",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#e94560",
+    "backgroundColor": "#1a1a2e",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/fund/fund",
+        "text": "基金",
+        "iconPath": "assets/icons/fund.png",
+        "selectedIconPath": "assets/icons/fund-active.png"
+      },
+      {
+        "pagePath": "pages/stock/stock",
+        "text": "股票",
+        "iconPath": "assets/icons/stock.png",
+        "selectedIconPath": "assets/icons/stock-active.png"
+      },
+      {
+        "pagePath": "pages/strategy/strategy",
+        "text": "策略",
+        "iconPath": "assets/icons/strategy.png",
+        "selectedIconPath": "assets/icons/strategy-active.png"
+      },
+      {
+        "pagePath": "pages/philosophy/philosophy",
+        "text": "体系",
+        "iconPath": "assets/icons/philosophy.png",
+        "selectedIconPath": "assets/icons/philosophy-active.png"
+      }
+    ]
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

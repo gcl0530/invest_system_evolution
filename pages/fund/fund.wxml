@@ -1,0 +1,221 @@
+<wxs src="fund.wxs" module="fmt" />
+
+<view class="container">
+  <!-- 顶部栏 -->
+  <view class="header">
+    <view class="header-title">基金关注</view>
+    <view class="header-action" bindtap="toggleSearch">
+      <t-icon name="search" size="40rpx" />
+    </view>
+  </view>
+
+  <!-- 搜索弹层 -->
+  <view class="search-panel" wx:if="{{showSearch}}">
+    <t-search
+      value="{{searchValue}}"
+      placeholder="搜索基金名称/代码"
+      bind:change="onSearchInput"
+    />
+    <view class="search-results">
+      <view 
+        class="search-result-item" 
+        wx:for="{{searchResults}}" 
+        wx:key="code"
+        data-code="{{item.code}}"
+        bindtap="addToWatchlist"
+      >
+        <view class="flex-row items-center justify-between">
+          <view class="flex-col">
+            <text class="result-name">{{item.name}}</text>
+            <text class="result-code">{{item.code}} · {{item.type}}</text>
+          </view>
+          <t-icon name="add" size="36rpx" color="#e94560" />
+        </view>
+      </view>
+      <view class="empty-state" wx:if="{{searchValue && searchResults.length === 0}}">
+        <text>未找到相关基金</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 关注列表 -->
+  <view class="watchlist" wx:if="{{!currentFund}}">
+    <view class="section-title">我的关注（{{watchlist.length}}）</view>
+    
+    <view 
+      class="watchlist-item card" 
+      wx:for="{{watchlist}}" 
+      wx:key="code"
+      data-code="{{item.code}}"
+      bindtap="selectFund"
+    >
+      <view class="flex-row justify-between items-center">
+        <view class="flex-col" style="flex: 1;">
+          <view class="flex-row items-center gap-sm">
+            <text class="fund-name">{{item.name}}</text>
+            <view class="indicator-tag {{item.dayChange > 0 ? 'tag-up' : 'tag-down'}}">
+              {{item.formattedChange}}
+            </view>
+          </view>
+          <text class="fund-code">{{item.code}} · {{item.type}}</text>
+        </view>
+        <view class="flex-col" style="align-items: flex-end;">
+          <text class="fund-nav font-num">{{item.formattedNav}}</text>
+          <text class="fund-date">{{item.navDate}}</text>
+        </view>
+      </view>
+      
+      <!-- 涨跌数据条 -->
+      <view class="fund-stats">
+        <view class="stat-item">
+          <text class="stat-label">周</text>
+          <text class="stat-value {{item.weekChange > 0 ? 'text-up' : 'text-down'}} font-num">{{item.weekChange > 0 ? '+' : ''}}{{item.weekChange}}%</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">月</text>
+          <text class="stat-value {{item.monthChange > 0 ? 'text-up' : 'text-down'}} font-num">{{item.monthChange > 0 ? '+' : ''}}{{item.monthChange}}%</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">年</text>
+          <text class="stat-value {{item.yearChange > 0 ? 'text-up' : 'text-down'}} font-num">{{item.yearChange > 0 ? '+' : ''}}{{item.yearChange}}%</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">规模</text>
+          <text class="stat-value font-num">{{item.scale}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">风险</text>
+          <text class="stat-value">{{item.riskLevel}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{watchlist.length === 0}}" style="padding: 120rpx 0;">
+      <t-icon name="add" size="80rpx" color="#5a5a70" />
+      <text style="margin-top: 20rpx;">点击右上角搜索添加基金</text>
+    </view>
+  </view>
+
+  <!-- 基金详情 -->
+  <view class="detail-view" wx:if="{{currentFund && fundDetail}}">
+    <!-- 详情头部 -->
+    <view class="detail-header card">
+      <view class="flex-row justify-between items-center">
+        <view class="flex-col">
+          <text class="detail-name">{{currentFund.name}}</text>
+          <text class="detail-code">{{currentFund.code}} · {{currentFund.type}}</text>
+        </view>
+        <view class="flex-row gap-sm">
+          <t-button theme="primary" size="small" variant="outline" bindtap="closeDetail">返回</t-button>
+          <t-button theme="danger" size="small" variant="outline" data-code="{{currentFund.code}}" bindtap="removeFromWatchlist">取消关注</t-button>
+        </view>
+      </view>
+      
+      <!-- 净价信息 -->
+      <view class="detail-price-row">
+        <view class="flex-col">
+          <text class="detail-nav font-num">{{currentFund.netValue}}</text>
+          <text class="detail-date">净值日期: {{currentFund.navDate}}</text>
+        </view>
+        <view class="detail-change">
+          <text class="font-num {{currentFund.dayChange > 0 ? 'text-up' : 'text-down'}}">
+            {{currentFund.dayChange > 0 ? '+' : ''}}{{currentFund.dayChange}}%
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 周期选择 -->
+    <view class="period-bar">
+      <view 
+        class="period-tab {{period === item ? 'active' : ''}}" 
+        wx:for="{{['日K', '周K', '月K']}}" 
+        wx:key="*this"
+        data-value="{{item}}"
+        bindtap="onPeriodChange"
+      >{{item}}</view>
+    </view>
+
+    <!-- K 线图 -->
+    <kline-chart
+      klineData="{{fundDetail.kline}}"
+      indicators="{{fundDetail.indicators}}"
+      showMA="{{true}}"
+      showBOLL="{{false}}"
+      showMACD="{{true}}"
+      showVolume="{{true}}"
+      showRSI="{{false}}"
+    />
+
+    <!-- 指标数据表 -->
+    <view class="indicator-data card">
+      <view class="section-title" style="padding: 0 0 16rpx;">技术指标</view>
+      
+      <!-- 均线数据 -->
+      <view class="indicator-section">
+        <view class="indicator-section-title">均线</view>
+        <view class="indicator-grid">
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #ffa726;">MA5</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(fundDetail.indicators.ma5), 4)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #42a5f5;">MA10</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(fundDetail.indicators.ma10), 4)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #66bb6a;">MA20</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(fundDetail.indicators.ma20), 4)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #ab47bc;">MA60</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(fundDetail.indicators.ma60), 4)}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <!-- 布林带 -->
+      <view class="indicator-section">
+        <view class="indicator-section-title">布林带</view>
+        <view class="indicator-grid">
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #ef5350;">上轨</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(fundDetail.indicators.boll.upper), 4)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #78909c;">中轨</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(fundDetail.indicators.boll.mid), 4)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #26a69a;">下轨</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(fundDetail.indicators.boll.lower), 4)}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <!-- MACD -->
+      <view class="indicator-section">
+        <view class="indicator-section-title">MACD</view>
+        <view class="indicator-grid">
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #42a5f5;">DIF</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(fundDetail.indicators.macd.dif), 4)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label" style="color: #ffa726;">DEA</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(fundDetail.indicators.macd.dea), 4)}}</text>
+          </view>
+          <view class="indicator-cell">
+            <text class="indicator-cell-label">柱</text>
+            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(fundDetail.indicators.macd.histogram), 4)}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

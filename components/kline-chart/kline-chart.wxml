@@ -1,0 +1,20 @@
+<view class="kline-container">
+  <!-- 指标切换栏 -->
+  <view class="indicator-bar">
+    <view class="indicator-toggle {{showMA ? 'active' : ''}}" bindtap="toggleMA">均线</view>
+    <view class="indicator-toggle {{showBOLL ? 'active' : ''}}" bindtap="toggleBOLL">BOLL</view>
+    <view class="indicator-toggle {{showMACD ? 'active' : ''}}" bindtap="toggleMACD">MACD</view>
+    <view class="indicator-toggle {{showVolume ? 'active' : ''}}" bindtap="toggleVolume">成交量</view>
+    <view class="indicator-toggle {{showRSI ? 'active' : ''}}" bindtap="toggleRSI">RSI</view>
+  </view>
+  
+  <!-- K 线画布 -->
+  <canvas
+    type="2d"
+    id="{{canvasId}}"
+    class="kline-canvas"
+    bindtouchstart="onTouchStart"
+    bindtouchmove="onTouchMove"
+    bindtouchend="onTouchEnd"
+  ></canvas>
+</view>

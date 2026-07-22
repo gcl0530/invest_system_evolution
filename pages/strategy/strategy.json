@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "策略",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "kline-chart": "/components/kline-chart/kline-chart",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-switch": "tdesign-miniprogram/switch/switch",
+    "t-stepper": "tdesign-miniprogram/stepper/stepper",
+    "t-picker": "tdesign-miniprogram/picker/picker",
+    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar"
+  }
+}

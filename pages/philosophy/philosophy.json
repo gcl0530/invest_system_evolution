@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "投资体系",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-textarea": "tdesign-miniprogram/textarea/textarea",
+    "t-popup": "tdesign-miniprogram/popup/popup",
+    "t-input": "tdesign-miniprogram/input/input"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "股票",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "kline-chart": "/components/kline-chart/kline-chart",
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-search": "tdesign-miniprogram/search/search"
+  }
+}

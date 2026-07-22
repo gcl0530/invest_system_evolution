@@ -1,0 +1,358 @@
+/* pages/strategy/strategy.wxss */
+
+/* Tab 栏 */
+.tab-bar {
+  display: flex;
+  flex-direction: row;
+  background-color: #1a1a2e;
+  border-bottom: 1rpx solid #2a2a4a;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #8a8aa0;
+  border-bottom: 4rpx solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-item.active {
+  color: #e94560;
+  border-bottom-color: #e94560;
+  font-weight: 600;
+}
+
+.tab-content {
+  padding-bottom: 120rpx;
+}
+
+/* 提醒 */
+.alert-section {
+  padding: 16rpx 0;
+}
+
+.alert-list {
+  padding: 0 32rpx;
+}
+
+.alert-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding: 20rpx 24rpx;
+}
+
+.alert-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #ef5350;
+}
+
+.alert-time {
+  font-size: 20rpx;
+  color: #5a5a70;
+}
+
+.alert-msg {
+  font-size: 24rpx;
+  color: #8a8aa0;
+  white-space: pre-line;
+}
+
+/* 策略列表 */
+.strategy-list {
+  padding: 0 0 32rpx;
+}
+
+.strategy-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.strategy-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #e8e8f0;
+}
+
+.strategy-code {
+  font-size: 22rpx;
+  color: #8a8aa0;
+  margin-top: 4rpx;
+}
+
+.strategy-conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.conditions-label {
+  font-size: 22rpx;
+  color: #8a8aa0;
+}
+
+.condition-tags {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.condition-tag {
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
+  background-color: rgba(124, 77, 255, 0.15);
+  color: #7c4dff;
+  font-size: 20rpx;
+}
+
+.strategy-stats {
+  display: flex;
+  flex-direction: row;
+  gap: 32rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx dashed #2a2a4a;
+}
+
+.strategy-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 16rpx;
+}
+
+/* 表单 */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.form-label {
+  font-size: 26rpx;
+  color: #8a8aa0;
+  font-weight: 500;
+}
+
+.type-selector {
+  display: flex;
+  flex-direction: row;
+  gap: 16rpx;
+}
+
+.type-option {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  border-radius: 8rpx;
+  background-color: rgba(255, 255, 255, 0.04);
+  color: #8a8aa0;
+  font-size: 26rpx;
+}
+
+.type-option.active {
+  background-color: #e94560;
+  color: #fff;
+}
+
+/* 条件 */
+.condition-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.condition-item {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 12rpx;
+  padding: 20rpx;
+}
+
+.condition-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.condition-title {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #e8e8f0;
+}
+
+.condition-config {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.config-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.config-label {
+  font-size: 22rpx;
+  color: #5a5a70;
+  width: 60rpx;
+}
+
+/* 金字塔 */
+.pyramid-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pyramid-diagram {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 8rpx;
+  width: 100%;
+  padding: 16rpx 0;
+}
+
+.pyramid-layer {
+  border-radius: 8rpx;
+  overflow: hidden;
+  transition: all 0.3s;
+  background: linear-gradient(135deg, #1b3a4b, #2d5a6f);
+}
+
+.layer-content {
+  padding: 16rpx 24rpx;
+}
+
+.layer-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 4rpx;
+}
+
+.layer-details {
+  display: flex;
+  flex-direction: row;
+  gap: 16rpx;
+}
+
+.layer-ratio {
+  font-size: 24rpx;
+  color: #fff;
+  font-weight: 600;
+}
+
+.layer-shares {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.layer-capital {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.layer-status {
+  font-size: 20rpx;
+  color: #ffd54f;
+  margin-top: 4rpx;
+}
+
+/* 金字塔统计 */
+.pyramid-stats {
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.stat-box {
+  flex: 1;
+  min-width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 8rpx;
+}
+
+.stat-box-label {
+  font-size: 20rpx;
+  color: #5a5a70;
+}
+
+.stat-box-value {
+  font-size: 28rpx;
+  color: #e8e8f0;
+  font-weight: 600;
+  margin-top: 4rpx;
+}
+
+/* 金字塔配置 */
+.pyramid-config {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.config-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.config-item-label {
+  font-size: 26rpx;
+  color: #8a8aa0;
+}
+
+.config-item-control {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.config-unit {
+  font-size: 22rpx;
+  color: #5a5a70;
+}
+
+/* 金字塔原则 */
+.pyramid-principle {
+  display: flex;
+  flex-direction: column;
+}
+
+.principle-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.principle-text {
+  font-size: 24rpx;
+  color: #8a8aa0;
+  line-height: 1.8;
+}

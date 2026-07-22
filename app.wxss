@@ -1,0 +1,165 @@
+/* app.wxss - 全局样式 */
+/* 投资助手 - 深色专业风格 */
+
+page {
+  --color-bg: #0f0f1e;
+  --color-card: #1a1a2e;
+  --color-card-elevated: #16213e;
+  --color-border: #2a2a4a;
+  --color-text-primary: #e8e8f0;
+  --color-text-secondary: #8a8aa0;
+  --color-text-tertiary: #5a5a70;
+  
+  --color-up: #ef5350;
+  --color-down: #26a69a;
+  --color-flat: #78909c;
+  
+  --color-accent: #e94560;
+  --color-accent-secondary: #7c4dff;
+  --color-gold: #ffd54f;
+  
+  --color-ma5: #ffa726;
+  --color-ma10: #42a5f5;
+  --color-ma20: #66bb6a;
+  --color-ma60: #ab47bc;
+  
+  --radius-sm: 8rpx;
+  --radius-md: 12rpx;
+  --radius-lg: 20rpx;
+  
+  --spacing-xs: 8rpx;
+  --spacing-sm: 16rpx;
+  --spacing-md: 24rpx;
+  --spacing-lg: 32rpx;
+  --spacing-xl: 48rpx;
+  
+  background-color: #0f0f1e;
+  color: #e8e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/* 通用容器 */
+.container {
+  min-height: 100vh;
+  background-color: #0f0f1e;
+  box-sizing: border-box;
+  padding-bottom: env(safe-area-in-bottom);
+}
+
+/* 卡片 */
+.card {
+  background-color: #1a1a2e;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin: 16rpx 24rpx;
+  border: 1rpx solid #2a2a4a;
+}
+
+.card-elevated {
+  background-color: #16213e;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin: 16rpx 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.3);
+}
+
+/* 标题 */
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #e8e8f0;
+  padding: 24rpx 24rpx 16rpx;
+}
+
+.section-subtitle {
+  font-size: 24rpx;
+  color: #8a8aa0;
+  padding: 0 24rpx 16rpx;
+}
+
+/* 涨跌色 */
+.text-up { color: #ef5350; }
+.text-down { color: #26a69a; }
+.text-flat { color: #78909c; }
+
+/* 数字字体 */
+.font-num {
+  font-family: 'SF Mono', 'DIN Alternate', 'Helvetica Neue', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 弹性布局 */
+.flex { display: flex; }
+.flex-row { display: flex; flex-direction: row; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-1 { flex: 1; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+
+/* 间距 */
+.gap-xs { gap: 8rpx; }
+.gap-sm { gap: 16rpx; }
+.gap-md { gap: 24rpx; }
+
+/* 指标标签 */
+.indicator-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+.tag-up {
+  background: rgba(239, 83, 80, 0.15);
+  color: #ef5350;
+}
+
+.tag-down {
+  background: rgba(38, 166, 154, 0.15);
+  color: #26a69a;
+}
+
+.tag-flat {
+  background: rgba(120, 144, 156, 0.15);
+  color: #78909c;
+}
+
+/* 分割线 */
+.divider {
+  height: 1rpx;
+  background-color: #2a2a4a;
+  margin: 16rpx 0;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48rpx 0;
+  color: #5a5a70;
+}
+
+/* 列表项 */
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #2a2a4a;
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+/* 标签栏 */
+.tab-bar-active {
+  color: #e94560 !important;
+}

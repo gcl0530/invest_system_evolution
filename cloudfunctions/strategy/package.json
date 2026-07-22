@@ -1,0 +1,9 @@
+{
+  "name": "strategy",
+  "version": "1.0.0",
+  "description": "策略数据云函数（多端同步+触发检查）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

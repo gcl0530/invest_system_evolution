@@ -1,0 +1,128 @@
+<view class="container">
+  <!-- 标题栏 -->
+  <view class="philosophy-header">
+    <text class="philosophy-title">投资体系</text>
+    <text class="philosophy-subtitle">道 · 法 · 术 · 器 · 势</text>
+  </view>
+
+  <!-- 层级选择器 -->
+  <view class="level-selector">
+    <view 
+      class="level-item {{activeLevel === 'dao' ? 'active' : ''}}" 
+      data-level="dao"
+      bindtap="onLevelChange"
+      style="--level-color: #ffd54f;"
+    >
+      <text class="level-char">道</text>
+      <text class="level-text">投资哲学</text>
+    </view>
+    <view 
+      class="level-item {{activeLevel === 'fa' ? 'active' : ''}}" 
+      data-level="fa"
+      bindtap="onLevelChange"
+      style="--level-color: #7c4dff;"
+    >
+      <text class="level-char">法</text>
+      <text class="level-text">投资体系</text>
+    </view>
+    <view 
+      class="level-item {{activeLevel === 'shu' ? 'active' : ''}}" 
+      data-level="shu"
+      bindtap="onLevelChange"
+      style="--level-color: #42a5f5;"
+    >
+      <text class="level-char">术</text>
+      <text class="level-text">技术分析</text>
+    </view>
+    <view 
+      class="level-item {{activeLevel === 'qi' ? 'active' : ''}}" 
+      data-level="qi"
+      bindtap="onLevelChange"
+      style="--level-color: #26a69a;"
+    >
+      <text class="level-char">器</text>
+      <text class="level-text">工具平台</text>
+    </view>
+    <view 
+      class="level-item {{activeLevel === 'shi' ? 'active' : ''}}" 
+      data-level="shi"
+      bindtap="onLevelChange"
+      style="--level-color: #ef5350;"
+    >
+      <text class="level-char">势</text>
+      <text class="level-text">市场环境</text>
+    </view>
+  </view>
+
+  <!-- 当前层级内容 -->
+  <view class="level-content">
+    <block wx:for="{{[framework[activeLevel]]}}" wx:key="title">
+      <view class="level-header card">
+        <text class="level-title" style="color: {{item.color}};">{{item.title}}</text>
+        <text class="level-subtitle">{{item.subtitle}}</text>
+      </view>
+      
+      <view class="item-list">
+        <view class="philosophy-item card" wx:for="{{item.items}}" wx:for-item="entry" wx:key="id">
+          <view class="item-header">
+            <text class="item-title" style="border-left-color: {{item.color}};">{{entry.title}}</text>
+            <view class="item-actions">
+              <text class="action-btn" data-level="{{activeLevel}}" data-id="{{entry.id}}" bindtap="editItem">编辑</text>
+              <text class="action-btn danger" data-level="{{activeLevel}}" data-id="{{entry.id}}" bindtap="deleteItem">删除</text>
+            </view>
+          </view>
+          
+          <!-- 编辑模式 -->
+          <view wx:if="{{editingItem.level === activeLevel && editingItem.id === entry.id}}" class="edit-mode">
+            <t-textarea
+              value="{{editingContent}}"
+              bind:change="onEditContentInput"
+              placeholder="编辑内容..."
+              autosize
+            />
+            <view class="edit-actions">
+              <t-button size="small" theme="primary" bindtap="saveEdit">保存</t-button>
+              <t-button size="small" variant="outline" bindtap="cancelEdit">取消</t-button>
+            </view>
+          </view>
+          
+          <!-- 查看模式 -->
+          <view wx:else class="item-content">
+            <text class="content-text">{{entry.content}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 添加按钮 -->
+    <view class="add-section">
+      <t-button theme="primary" variant="outline" block bindtap="showAdd">+ 添加条目</t-button>
+    </view>
+  </view>
+
+  <!-- 新增弹层 -->
+  <t-popup visible="{{showAddPanel}}" placement="bottom" bind:visible-change="hideAdd">
+    <view class="add-popup">
+      <view class="popup-header">
+        <text class="popup-title">添加新条目</text>
+        <text class="popup-close" bindtap="hideAdd">关闭</text>
+      </view>
+      <view class="popup-form">
+        <view class="form-group">
+          <text class="form-label">标题</text>
+          <t-input placeholder="如：择股原则" value="{{newTitle}}" bind:change="onNewTitleInput" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">内容</text>
+          <t-textarea
+            placeholder="详细描述你的投资理念..."
+            value="{{newContent}}"
+            bind:change="onNewContentInput"
+            autosize
+          />
+        </view>
+        <t-button theme="primary" block bindtap="addItem" style="margin-top: 24rpx;">确认添加</t-button>
+      </view>
+    </view>
+  </t-popup>
+</view>
