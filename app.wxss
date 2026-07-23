@@ -129,6 +129,17 @@ page {
   color: #78909c;
 }
 
+.tag-active {
+  background: rgba(38, 166, 154, 0.2);
+  color: #26a69a;
+  font-weight: 600;
+}
+
+.tag-paused {
+  background: rgba(138, 138, 160, 0.15);
+  color: #8a8aa0;
+}
+
 /* 分割线 */
 .divider {
   height: 1rpx;

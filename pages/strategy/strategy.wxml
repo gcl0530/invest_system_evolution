@@ -31,7 +31,7 @@
           <view class="flex-col" style="flex: 1;">
             <view class="flex-row items-center gap-sm">
               <text class="strategy-name">{{item.name}}</text>
-              <view class="indicator-tag {{item.enabled ? 'tag-up' : 'tag-flat'}}">
+              <view class="indicator-tag {{item.enabled ? 'tag-active' : 'tag-paused'}}">
                 {{item.enabled ? '运行中' : '已暂停'}}
               </view>
             </view>
