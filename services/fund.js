@@ -20,11 +20,11 @@ async function getFundList() {
  * @param {string} code - 基金代码
  * @returns {Promise<object>}
  */
-async function getFundDetail(code) {
+async function getFundDetail(code, period) {
   if (USE_CLOUD) {
-    return callCloud('fund', { action: 'getDetail', code })
+    return callCloud('fund', { action: 'getDetail', code, period })
   }
-  return mock.getFundDetail(code)
+  return mock.getFundDetail(code, period)
 }
 
 /**

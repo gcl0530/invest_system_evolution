@@ -140,10 +140,18 @@ const mockStocks = [
   }
 ]
 
+// 周期配置：不同周期生成不同根数和波动率的 K 线（mock 模拟，真实数据由云函数返回）
+const PERIOD_CONFIG = {
+  '日K': { count: 60, fundVol: 0.015, stockVol: 0.025 },
+  '周K': { count: 30, fundVol: 0.03, stockVol: 0.05 },
+  '月K': { count: 20, fundVol: 0.05, stockVol: 0.08 }
+}
+
 // 基金详情 + K 线
-function getFundDetail(code) {
+function getFundDetail(code, period) {
   const fund = mockFunds.find(f => f.code === code) || mockFunds[0]
-  const kline = generateKLineData(60, fund.netValue, 0.015)
+  const cfg = PERIOD_CONFIG[period] || PERIOD_CONFIG['日K']
+  const kline = generateKLineData(cfg.count, fund.netValue, cfg.fundVol)
   const closes = kline.map(k => k.close)
   return {
     ...fund,
@@ -161,9 +169,10 @@ function getFundDetail(code) {
 }
 
 // 股票详情 + K 线
-function getStockDetail(code) {
+function getStockDetail(code, period) {
   const stock = mockStocks.find(s => s.code === code) || mockStocks[0]
-  const kline = generateKLineData(60, stock.price, 0.025)
+  const cfg = PERIOD_CONFIG[period] || PERIOD_CONFIG['日K']
+  const kline = generateKLineData(cfg.count, stock.price, cfg.stockVol)
   const closes = kline.map(k => k.close)
   const highs = kline.map(k => k.high)
   const lows = kline.map(k => k.low)
