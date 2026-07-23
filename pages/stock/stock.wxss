@@ -58,7 +58,7 @@
 .stat-label { font-size: 20rpx; color: #5a5a70; }
 .stat-value { font-size: 24rpx; color: #e8e8f0; }
 
-.detail-view { padding-bottom: 120rpx; }
+.detail-view { padding-bottom: 24rpx; }
 
 .detail-header { display: flex; flex-direction: column; gap: 24rpx; }
 
@@ -156,3 +156,8 @@
 
 .indicator-cell-label { font-size: 20rpx; margin-bottom: 4rpx; }
 .indicator-cell-value { font-size: 26rpx; color: #e8e8f0; font-weight: 500; }
+
+.indicator-strip { white-space: nowrap; padding: 16rpx 24rpx 24rpx; box-sizing: border-box; }
+.ind-item { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; min-width: 108rpx; padding: 14rpx 16rpx; margin-right: 16rpx; background-color: rgba(255, 255, 255, 0.04); border-radius: 12rpx; }
+.ind-label { font-size: 20rpx; margin-bottom: 6rpx; }
+.ind-val { font-size: 24rpx; color: #e8e8f0; }

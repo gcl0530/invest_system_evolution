@@ -85,7 +85,7 @@ Component({
               // 缓存 dpr，避免每次 draw 都调同步 API（wx.getSystemInfoSync 已不推荐）
               if (!this._dpr) {
                 const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync()
-                this._dpr = info.pixelRatio
+                this._dpr = info.pixelRatio || 2
               }
               const dpr = this._dpr
               canvas.width = res[0].width * dpr
@@ -102,9 +102,11 @@ Component({
     // 主绘制函数
     async draw() {
       const { klineData, indicators, colors } = this.properties
+      console.log('[K线] draw触发 klineData长度:', klineData ? klineData.length : 'null', '首根:', klineData && klineData[0] ? JSON.stringify(klineData[0]).slice(0, 80) : '无')
       if (!klineData || klineData.length === 0) return
 
       const canvasInfo = await this.getCtx()
+      console.log('[K线] canvasInfo:', canvasInfo ? ('w' + canvasInfo.width + 'h' + canvasInfo.height) : 'null')
       if (!canvasInfo) return
       const { ctx, width, height } = canvasInfo
 

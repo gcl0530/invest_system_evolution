@@ -2,10 +2,10 @@
 
 <view class="container">
   <!-- 顶部栏 -->
-  <view class="header">
+  <view class="header" wx:if="{{!currentStock}}">
     <view class="header-title">股票关注</view>
     <view class="header-action" bindtap="toggleSearch">
-      <t-icon name="search" size="40rpx" />
+      <text style="font-size:40rpx">🔍</text>
     </view>
   </view>
 
@@ -29,7 +29,7 @@
             <text class="result-name">{{item.name}}</text>
             <text class="result-code">{{item.code}} · {{item.industry}}</text>
           </view>
-          <t-icon name="add" size="36rpx" color="#e94560" />
+          <text style="font-size:36rpx;color:#e94560">＋</text>
         </view>
       </view>
       <view class="empty-state" wx:if="{{searchValue && searchResults.length === 0}}">
@@ -89,7 +89,7 @@
     </view>
 
     <view class="empty-state" wx:if="{{watchlist.length === 0}}" style="padding: 120rpx 0;">
-      <t-icon name="add" size="80rpx" color="#5a5a70" />
+      <text style="font-size:80rpx;color:#5a5a70">＋</text>
       <text style="margin-top: 20rpx;">点击右上角搜索添加股票</text>
     </view>
   </view>
@@ -181,108 +181,22 @@
       showRSI="{{true}}"
     />
 
-    <!-- 指标数据表 -->
-    <view class="indicator-data card">
-      <view class="section-title" style="padding: 0 0 16rpx;">技术指标</view>
-      
-      <!-- 均线 -->
-      <view class="indicator-section">
-        <view class="indicator-section-title">均线</view>
-        <view class="indicator-grid">
-          <view class="indicator-cell">
-            <text class="indicator-cell-label" style="color: #ffa726;">MA5</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma5), 2)}}</text>
-          </view>
-          <view class="indicator-cell">
-            <text class="indicator-cell-label" style="color: #42a5f5;">MA10</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma10), 2)}}</text>
-          </view>
-          <view class="indicator-cell">
-            <text class="indicator-cell-label" style="color: #66bb6a;">MA20</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma20), 2)}}</text>
-          </view>
-          <view class="indicator-cell">
-            <text class="indicator-cell-label" style="color: #ab47bc;">MA60</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma60), 2)}}</text>
-          </view>
-        </view>
-      </view>
-
-      <view class="divider"></view>
-
-      <!-- 布林带 -->
-      <view class="indicator-section">
-        <view class="indicator-section-title">布林带</view>
-        <view class="indicator-grid">
-          <view class="indicator-cell">
-            <text class="indicator-cell-label" style="color: #ef5350;">上轨</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.boll.upper), 2)}}</text>
-          </view>
-          <view class="indicator-cell">
-            <text class="indicator-cell-label" style="color: #78909c;">中轨</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.boll.mid), 2)}}</text>
-          </view>
-          <view class="indicator-cell">
-            <text class="indicator-cell-label" style="color: #26a69a;">下轨</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.boll.lower), 2)}}</text>
-          </view>
-        </view>
-      </view>
-
-      <view class="divider"></view>
-
-      <!-- MACD -->
-      <view class="indicator-section">
-        <view class="indicator-section-title">MACD</view>
-        <view class="indicator-grid">
-          <view class="indicator-cell">
-            <text class="indicator-cell-label" style="color: #42a5f5;">DIF</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.macd.dif), 4)}}</text>
-          </view>
-          <view class="indicator-cell">
-            <text class="indicator-cell-label" style="color: #ffa726;">DEA</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.macd.dea), 4)}}</text>
-          </view>
-          <view class="indicator-cell">
-            <text class="indicator-cell-label">柱</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.macd.histogram), 4)}}</text>
-          </view>
-        </view>
-      </view>
-
-      <view class="divider"></view>
-
-      <!-- RSI -->
-      <view class="indicator-section">
-        <view class="indicator-section-title">RSI</view>
-        <view class="indicator-grid">
-          <view class="indicator-cell">
-            <text class="indicator-cell-label">RSI(14)</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.rsi), 2)}}</text>
-          </view>
-        </view>
-      </view>
-
-      <view class="divider"></view>
-
-      <!-- KDJ -->
-      <view class="indicator-section">
-        <view class="indicator-section-title">KDJ</view>
-        <view class="indicator-grid">
-          <view class="indicator-cell">
-            <text class="indicator-cell-label">K</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.kdj.k), 2)}}</text>
-          </view>
-          <view class="indicator-cell">
-            <text class="indicator-cell-label">D</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.kdj.d), 2)}}</text>
-          </view>
-          <view class="indicator-cell">
-            <text class="indicator-cell-label">J</text>
-            <text class="indicator-cell-value font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.kdj.j), 2)}}</text>
-          </view>
-        </view>
-      </view>
-    </view>
+    <!-- 指标数据：横向滚动一行，不占纵向空间 -->
+    <scroll-view scroll-x class="indicator-strip" enable-flex>
+      <view class="ind-item"><text class="ind-label" style="color:#ffa726">MA5</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma5), 2)}}</text></view>
+      <view class="ind-item"><text class="ind-label" style="color:#42a5f5">MA10</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma10), 2)}}</text></view>
+      <view class="ind-item"><text class="ind-label" style="color:#66bb6a">MA20</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma20), 2)}}</text></view>
+      <view class="ind-item"><text class="ind-label" style="color:#ab47bc">MA60</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.ma60), 2)}}</text></view>
+      <view class="ind-item"><text class="ind-label" style="color:#ef5350">BOLL上</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.boll.upper), 2)}}</text></view>
+      <view class="ind-item"><text class="ind-label" style="color:#78909c">BOLL中</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.boll.mid), 2)}}</text></view>
+      <view class="ind-item"><text class="ind-label" style="color:#26a69a">BOLL下</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.boll.lower), 2)}}</text></view>
+      <view class="ind-item"><text class="ind-label" style="color:#42a5f5">DIF</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.macd.dif), 4)}}</text></view>
+      <view class="ind-item"><text class="ind-label" style="color:#ffa726">DEA</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.macd.dea), 4)}}</text></view>
+      <view class="ind-item"><text class="ind-label">MACD柱</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.macd.histogram), 4)}}</text></view>
+      <view class="ind-item"><text class="ind-label">RSI</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.rsi), 2)}}</text></view>
+      <view class="ind-item"><text class="ind-label">K</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.kdj.k), 2)}}</text></view>
+      <view class="ind-item"><text class="ind-label">D</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.kdj.d), 2)}}</text></view>
+      <view class="ind-item"><text class="ind-label">J</text><text class="ind-val font-num">{{fmt.formatNum(fmt.getLast(stockDetail.indicators.kdj.j), 2)}}</text></view>
+    </scroll-view>
   </view>
 </view>
