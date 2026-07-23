@@ -100,24 +100,52 @@
   flex-direction: row;
   align-items: center;
   gap: 8rpx;
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 12rpx 20rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.1);
 }
 
 .param-unit {
   font-size: 22rpx;
-  color: #5a5a70;
+  color: #8a8aa0;
+  font-weight: 500;
 }
 
-/* Stepper 数字强制可见（黑背景场景） */
-.t-stepper__input {
-  color: #e8e8f0 !important;
-  background-color: rgba(255, 255, 255, 0.06) !important;
+/* Stepper 数字强制可见（黑背景场景）- 高权重选择器 */
+page .t-stepper__input,
+.t-stepper .t-stepper__input,
+.t-stepper--default .t-stepper__input,
+.backtest-stepper .t-stepper__input {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  font-weight: 700 !important;
+  font-size: 28rpx !important;
+  text-shadow: 0 1rpx 2rpx rgba(0,0,0,0.3) !important;
 }
 
-.t-stepper__minus,
-.t-stepper__plus {
-  color: #e8e8f0 !important;
-  background-color: rgba(255, 255, 255, 0.06) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+page .t-stepper__minus,
+page .t-stepper__plus,
+.t-stepper .t-stepper__minus,
+.t-stepper .t-stepper__plus,
+.backtest-stepper .t-stepper__minus,
+.backtest-stepper .t-stepper__plus {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 直接覆盖 input 元素样式 */
+page .t-stepper input,
+.backtest-stepper input {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* 自定义 stepper 容器样式增强 */
+.backtest-stepper {
+  --td-stepper-input-color: #ffffff !important;
+  --td-stepper-input-bg: rgba(255,255,255,0.15) !important;
 }
 
 /* 条件预览 */
