@@ -295,5 +295,16 @@ Page({
     const val = Number(e.detail.value) / 100
     this.setData({ 'pyramidConfig.takeProfitRatio': val })
     this.calcPyramid()
+  },
+
+  onShareAppMessage() {
+    return {
+      title: '投资助手 · 策略与金字塔加仓',
+      path: '/pages/strategy/strategy'
+    }
+  },
+
+  onShareTimeline() {
+    return { title: '投资助手 · 策略与金字塔加仓' }
   }
 })

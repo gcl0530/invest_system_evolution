@@ -195,5 +195,16 @@ Page({
   savePhilosophy(framework) {
     app.globalData.philosophy = { framework }
     app.savePhilosophy()
+  },
+
+  onShareAppMessage() {
+    return {
+      title: '投资助手 · 道法术器势投资体系',
+      path: '/pages/philosophy/philosophy'
+    }
+  },
+
+  onShareTimeline() {
+    return { title: '投资助手 · 道法术器势投资体系' }
   }
 })

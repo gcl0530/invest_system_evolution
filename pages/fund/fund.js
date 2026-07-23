@@ -33,9 +33,9 @@ Page({
   onShow() {
     // 刷新关注列表
     this.initWatchlist()
-    // 如果有选中基金，刷新详情
+    // 如果有选中基金，刷新详情（带当前周期）
     if (this.data.currentFund) {
-      this.loadFundDetail(this.data.currentFund.code)
+      this.loadFundDetail(this.data.currentFund.code, this.data.period)
     }
   },
 
@@ -107,15 +107,15 @@ Page({
   // 选中基金查看详情
   selectFund(e) {
     const { code } = e.currentTarget.dataset
-    this.loadFundDetail(code)
+    this.loadFundDetail(code, this.data.period)
   },
 
   // 加载基金详情
-  async loadFundDetail(code) {
+  async loadFundDetail(code, period) {
     this.setData({ loading: true })
     wx.showLoading({ title: '加载中...' })
     try {
-      const detail = await fundService.getFundDetail(code)
+      const detail = await fundService.getFundDetail(code, period)
       if (detail) {
         this.setData({
           currentFund: detail,
@@ -141,9 +141,21 @@ Page({
 
   // 切换周期
   onPeriodChange(e) {
-    this.setData({ period: e.detail.value })
+    const val = e.detail.value || e.currentTarget.dataset.value
+    this.setData({ period: val })
     if (this.data.currentFund) {
-      this.loadFundDetail(this.data.currentFund.code)
+      this.loadFundDetail(this.data.currentFund.code, val)
     }
+  },
+
+  onShareAppMessage() {
+    return {
+      title: '投资助手 · 基金关注',
+      path: '/pages/fund/fund'
+    }
+  },
+
+  onShareTimeline() {
+    return { title: '投资助手 · 基金关注' }
   }
 })

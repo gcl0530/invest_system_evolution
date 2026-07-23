@@ -22,7 +22,7 @@ Page({
   onShow() {
     this.initWatchlist()
     if (this.data.currentStock) {
-      this.loadStockDetail(this.data.currentStock.code)
+      this.loadStockDetail(this.data.currentStock.code, this.data.period)
     }
   },
 
@@ -30,6 +30,15 @@ Page({
     let watchlist = app.globalData.watchlistStocks
     if (watchlist.length === 0) {
       watchlist = await stockService.getStockList()
+    }
+    // 真实数据模式下，批量刷新关注列表价格
+    const codes = watchlist.map(s => s.code)
+    const quotes = await stockService.getBatchQuotes(codes)
+    if (quotes.length > 0) {
+      watchlist = watchlist.map(s => {
+        const q = quotes.find(x => x.code === s.code)
+        return q ? { ...s, ...q } : s
+      })
     }
     this.setData({
       watchlist: watchlist.map(s => ({
@@ -89,14 +98,15 @@ Page({
 
   selectStock(e) {
     const { code } = e.currentTarget.dataset
-    this.loadStockDetail(code)
+    this.setData({ showSearch: false, searchValue: '', searchResults: [] })
+    this.loadStockDetail(code, this.data.period)
   },
 
-  async loadStockDetail(code) {
+  async loadStockDetail(code, period) {
     this.setData({ loading: true })
     wx.showLoading({ title: '加载中...' })
     try {
-      const detail = await stockService.getStockDetail(code)
+      const detail = await stockService.getStockDetail(code, period)
       if (detail) {
         this.setData({
           currentStock: detail,
@@ -115,9 +125,21 @@ Page({
   },
 
   onPeriodChange(e) {
-    this.setData({ period: e.detail.value || e.currentTarget.dataset.value })
+    const val = e.detail.value || e.currentTarget.dataset.value
+    this.setData({ period: val })
     if (this.data.currentStock) {
-      this.loadStockDetail(this.data.currentStock.code)
+      this.loadStockDetail(this.data.currentStock.code, val)
     }
+  },
+
+  onShareAppMessage() {
+    return {
+      title: '投资助手 · 股票关注',
+      path: '/pages/stock/stock'
+    }
+  },
+
+  onShareTimeline() {
+    return { title: '投资助手 · 股票关注' }
   }
 })
