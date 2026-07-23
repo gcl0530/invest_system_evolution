@@ -134,24 +134,36 @@ exports.main = async (event, context) => {
 
   switch (action) {
     case 'getList': {
-      // codes 传入时按用户关注列表拉估值；无 codes 返回默认 3 只热门基金
+      // fundgz 实时估值接口已下线，改用 pingzhongdata 最后一条真实净值（T-1 收盘）
       const { codes } = event
       const targetCodes = (codes && codes.length > 0) ? codes : DEFAULT_FUNDS.map(f => f.code)
       try {
         const results = await Promise.all(
           targetCodes.map(async code => {
-            const gz = await fetchFundGz(code)
-            const defaultFund = DEFAULT_FUNDS.find(f => f.code === code)
-            return {
-              code,
-              name: (gz && gz.name) || (defaultFund && defaultFund.name) || code,
-              type: (defaultFund && defaultFund.type) || '混合型',
-              netValue: (gz && gz.netValue) || 0,
-              dayChange: (gz && gz.dayChange) || 0,
-              navDate: (gz && gz.navDate) || '',
-              estimatedNav: (gz && gz.estimatedNav) || 0,
-              weekChange: 0,
-              monthChange: 0
+            try {
+              const fundData = await fetchFundData(code)
+              const arr = fundData.klineRaw || []
+              const last = arr.length > 0 ? arr[arr.length - 1] : null
+              const defaultFund = DEFAULT_FUNDS.find(f => f.code === code)
+              return {
+                code,
+                name: fundData.name || (defaultFund && defaultFund.name) || code,
+                type: (defaultFund && defaultFund.type) || '混合型',
+                netValue: last ? last.y : 0,
+                dayChange: last ? (last.equityReturn || 0) : 0,
+                navDate: last ? formatDate(last.x) : '',
+                estimatedNav: 0,
+                weekChange: 0,
+                monthChange: 0
+              }
+            } catch (e) {
+              const defaultFund = DEFAULT_FUNDS.find(f => f.code === code)
+              return {
+                code,
+                name: (defaultFund && defaultFund.name) || code,
+                type: (defaultFund && defaultFund.type) || '混合型',
+                netValue: 0, dayChange: 0, navDate: '', estimatedNav: 0, weekChange: 0, monthChange: 0
+              }
             }
           })
         )
@@ -165,22 +177,20 @@ exports.main = async (event, context) => {
     case 'getDetail': {
       const { code, period } = event
       try {
-        const [fundData, gz] = await Promise.all([
-          fetchFundData(code),
-          fetchFundGz(code)
-        ])
+        const fundData = await fetchFundData(code)
         const periodData = aggregateByPeriod(fundData.klineRaw, period || '日K')
-        const lastClose = periodData.length > 0 ? periodData[periodData.length - 1].close : 0
+        const rawArr = fundData.klineRaw || []
+        const lastRaw = rawArr.length > 0 ? rawArr[rawArr.length - 1] : null
         return {
           code: 0,
           data: {
             code,
             name: fundData.name,
             type: '混合型',
-            netValue: (gz && gz.netValue) || lastClose,
-            dayChange: (gz && gz.dayChange) || 0,
-            navDate: (gz && gz.navDate) || '',
-            estimatedNav: (gz && gz.estimatedNav) || 0,
+            netValue: lastRaw ? lastRaw.y : 0,
+            dayChange: lastRaw ? (lastRaw.equityReturn || 0) : 0,
+            navDate: lastRaw ? formatDate(lastRaw.x) : '',
+            estimatedNav: 0,
             weekChange: 0,
             monthChange: 0,
             kline: periodData
