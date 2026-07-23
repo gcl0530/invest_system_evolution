@@ -3,7 +3,8 @@
     "pages/fund/fund",
     "pages/stock/stock",
     "pages/strategy/strategy",
-    "pages/philosophy/philosophy"
+    "pages/philosophy/philosophy",
+    "pages/backtest/backtest"
   ],
   "window": {
     "navigationBarTitleText": "投资助手",

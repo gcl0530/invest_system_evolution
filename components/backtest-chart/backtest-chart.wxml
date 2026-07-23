@@ -1,0 +1,126 @@
+<wxs module="fmt">
+function formatNum(n, decimals) {
+  if (n === null || n === undefined) return '--'
+  decimals = decimals || 2
+  return Number(n).toFixed(decimals)
+}
+function formatPercent(n, decimals) {
+  if (n === null || n === undefined) return '--'
+  decimals = decimals || 2
+  var sign = n > 0 ? '+' : ''
+  return sign + Number(n * 100).toFixed(decimals) + '%'
+}
+function formatMoney(n) {
+  if (n === null || n === undefined) return '--'
+  if (Math.abs(n) >= 10000) return (n / 10000).toFixed(2) + '万'
+  return Math.round(n).toString()
+}
+function tradeTypeText(type) {
+  if (type === 'buy') return '买入'
+  if (type === 'sell') return '卖出'
+  return type
+}
+function tradeTypeClass(type) {
+  if (type === 'buy') return 'tag-up'
+  if (type === 'sell') return 'tag-down'
+  return 'tag-flat'
+}
+module.exports = {
+  formatNum: formatNum,
+  formatPercent: formatPercent,
+  formatMoney: formatMoney,
+  tradeTypeText: tradeTypeText,
+  tradeTypeClass: tradeTypeClass
+}
+</wxs>
+
+<view class="backtest-chart-container">
+  <!-- Tab 切换 -->
+  <view class="chart-tabs">
+    <view 
+      class="chart-tab {{activeTab === item.value ? 'active' : ''}}" 
+      wx:for="{{tabs}}" 
+      wx:key="value"
+      data-value="{{item.value}}"
+      bind:tap="onTabChange"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 图表区 -->
+  <view class="chart-area" wx:if="{{activeTab !== 'trades'}}">
+    <canvas 
+      type="2d" 
+      id="backtestCanvas" 
+      class="backtest-canvas"
+      style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;"
+    ></canvas>
+  </view>
+
+  <!-- 核心指标卡片 -->
+  <view class="metrics-grid" wx:if="{{result && activeTab === 'equity'}}">
+    <view class="metric-item">
+      <text class="metric-label">总收益</text>
+      <text class="metric-value {{result.totalReturn >= 0 ? 'text-up' : 'text-down'}}">{{fmt.formatPercent(result.totalReturn)}}</text>
+    </view>
+    <view class="metric-item">
+      <text class="metric-label">年化收益</text>
+      <text class="metric-value {{result.annualizedReturn >= 0 ? 'text-up' : 'text-down'}}">{{fmt.formatPercent(result.annualizedReturn)}}</text>
+    </view>
+    <view class="metric-item">
+      <text class="metric-label">最大回撤</text>
+      <text class="metric-value text-down">{{fmt.formatPercent(result.maxDrawdown)}}</text>
+    </view>
+    <view class="metric-item">
+      <text class="metric-label">夏普比率</text>
+      <text class="metric-value">{{fmt.formatNum(result.sharpeRatio, 3)}}</text>
+    </view>
+    <view class="metric-item">
+      <text class="metric-label">胜率</text>
+      <text class="metric-value">{{fmt.formatPercent(result.winRate, 1)}}</text>
+    </view>
+    <view class="metric-item">
+      <text class="metric-label">盈亏比</text>
+      <text class="metric-value">{{fmt.formatNum(result.profitFactor, 2)}}</text>
+    </view>
+  </view>
+
+  <!-- 交易记录 -->
+  <scroll-view 
+    class="trades-list" 
+    wx:if="{{activeTab === 'trades' && result}}"
+    scroll-y
+    enhanced
+    show-scrollbar="{{false}}"
+  >
+    <view class="trade-item" wx:for="{{result.trades}}" wx:key="index">
+      <view class="trade-header">
+        <view class="trade-tag {{fmt.tradeTypeClass(item.type)}}">{{fmt.tradeTypeText(item.type)}}</view>
+        <text class="trade-date">{{item.date}}</text>
+      </view>
+      <view class="trade-details">
+        <view class="trade-row">
+          <text class="trade-label">价格</text>
+          <text class="trade-value font-num">{{fmt.formatNum(item.price)}}</text>
+        </view>
+        <view class="trade-row">
+          <text class="trade-label">数量</text>
+          <text class="trade-value font-num">{{item.shares}}股</text>
+        </view>
+        <view class="trade-row" wx:if="{{item.type === 'sell'}}">
+          <text class="trade-label">盈亏</text>
+          <text class="trade-value font-num {{item.profit >= 0 ? 'text-up' : 'text-down'}}">
+            {{item.profit >= 0 ? '+' : ''}}{{fmt.formatNum(item.profit, 0)}}
+            ({{fmt.formatPercent(item.profitPercent)}})
+          </text>
+        </view>
+        <view class="trade-row">
+          <text class="trade-label">原因</text>
+          <text class="trade-value trade-reason">{{item.reason}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty-trades" wx:if="{{!result.trades || result.trades.length === 0}}">
+      <text>无交易记录</text>
+    </view>
+  </scroll-view>
+</view>

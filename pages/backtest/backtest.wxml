@@ -1,0 +1,156 @@
+<view class="container">
+  <!-- 配置区 -->
+  <view class="config-section card">
+    <view class="section-title">回测配置</view>
+
+    <!-- 选择已有策略 -->
+    <view class="form-group" wx:if="{{strategies.length > 0}}">
+      <text class="form-label">选择策略</text>
+      <t-picker
+        value="{{selectedStrategyId}}"
+        options="{{strategies}}"
+        valueKey="name"
+        labelKey="name"
+        bind:change="onStrategyChange"
+      >
+        <t-cell title="{{selectedStrategy.name || '点击选择策略'}}" arrow />
+      </t-picker>
+    </view>
+
+    <!-- 标的类型 -->
+    <view class="form-group">
+      <text class="form-label">标的类型</text>
+      <view class="type-selector">
+        <view class="type-option {{targetType === 'stock' ? 'active' : ''}}" data-value="stock" bind:tap="onTargetTypeTap">股票</view>
+        <view class="type-option {{targetType === 'fund' ? 'active' : ''}}" data-value="fund" bind:tap="onTargetTypeTap">基金</view>
+      </view>
+    </view>
+
+    <!-- 标的搜索 -->
+    <view class="form-group">
+      <text class="form-label">标的</text>
+      <t-input
+        placeholder="输入名称或代码搜索"
+        value="{{searchKeyword}}"
+        bind:change="onSearchInput"
+      />
+      <view class="search-results" wx:if="{{showSearchResults && searchResults.length > 0}}">
+        <view 
+          class="search-item" 
+          wx:for="{{searchResults}}" 
+          wx:key="code"
+          data-item="{{item}}"
+          bind:tap="onSearchResultTap"
+        >
+          <text class="search-code">{{item.code}}</text>
+          <text class="search-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 周期 -->
+    <view class="form-group">
+      <text class="form-label">K线周期</text>
+      <view class="type-selector">
+        <view 
+          class="type-option {{periodIndex === idx ? 'active' : ''}}" 
+          wx:for="{{periodOptions}}" 
+          wx:for-item="opt" 
+          wx:for-index="idx"
+          data-idx="{{idx}}"
+          bind:tap="onPeriodTap"
+        >{{opt}}</view>
+      </view>
+    </view>
+
+    <!-- 资金 -->
+    <view class="form-group">
+      <text class="form-label">初始资金（元）</text>
+      <t-input type="number" placeholder="100000" value="{{capital}}" bind:change="onCapitalInput" />
+    </view>
+
+    <!-- 金字塔开关 -->
+    <view class="form-group">
+      <view class="flex-row justify-between items-center">
+        <text class="form-label">启用金字塔加仓</text>
+        <t-switch checked="{{usePyramid}}" bind:change="onPyramidToggle" />
+      </view>
+    </view>
+
+    <!-- 金字塔参数 -->
+    <view class="pyramid-params" wx:if="{{usePyramid}}">
+      <view class="param-row">
+        <text class="param-label">止损比例</text>
+        <view class="param-control">
+          <t-stepper value="{{stopLossRatio}}" step="1" min="1" max="20" bind:change="onStopLossChange" />
+          <text class="param-unit">%</text>
+        </view>
+      </view>
+      <view class="param-row">
+        <text class="param-label">止盈比例</text>
+        <view class="param-control">
+          <t-stepper value="{{takeProfitRatio}}" step="1" min="5" max="50" bind:change="onTakeProfitChange" />
+          <text class="param-unit">%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 执行按钮 -->
+    <t-button 
+      theme="primary" 
+      size="large" 
+      block 
+      loading="{{loading}}"
+      bind:tap="runBacktestTest"
+      style="margin-top: 24rpx;"
+    >{{loading ? '回测中...' : '开始回测'}}</t-button>
+  </view>
+
+  <!-- 条件预览 -->
+  <view class="conditions-preview card" wx:if="{{selectedStrategy}}">
+    <view class="section-title">策略条件</view>
+    <view class="condition-tags">
+      <view class="condition-tag" wx:for="{{selectedStrategy.conditions}}" wx:key="id">
+        {{item.type === 'price_cross_ma' ? '均线交叉' : item.type === 'macd_cross' ? 'MACD' : item.type === 'boll_breakout' ? '布林带' : item.type === 'rsi_over' ? 'RSI' : item.type === 'volume_surge' ? '放量' : '目标价'}}
+        · {{item.direction}}
+        · {{item.action === 'buy' ? '买' : item.action === 'sell' ? '卖' : '提醒'}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 回测结果 -->
+  <block wx:if="{{result}}">
+    <view class="result-summary card">
+      <view class="section-title">回测摘要</view>
+      <view class="summary-grid">
+        <view class="summary-item">
+          <text class="summary-label">初始资金</text>
+          <text class="summary-value font-num">¥{{result.capital}}</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-label">最终权益</text>
+          <text class="summary-value font-num">¥{{result.finalEquity}}</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-label">总收益</text>
+          <text class="summary-value font-num {{result.totalReturn >= 0 ? 'text-up' : 'text-down'}}">
+            {{result.totalReturn >= 0 ? '+' : ''}}{{result.totalReturn * 100}}%
+          </text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-label">交易次数</text>
+          <text class="summary-value font-num">{{result.totalTrades}}</text>
+        </view>
+      </view>
+    </view>
+
+    <backtest-chart result="{{result}}" />
+  </block>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!result && !loading}}">
+    <text class="empty-icon">📊</text>
+    <text class="empty-text">配置策略参数后点击「开始回测」</text>
+    <text class="empty-sub">系统将用历史数据模拟策略执行，评估策略可行性</text>
+  </view>
+</view>

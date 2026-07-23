@@ -225,6 +225,14 @@ Page({
     })
   },
 
+  // 跳转回测
+  onBacktest(e) {
+    const { id } = e.currentTarget.dataset
+    wx.navigateTo({
+      url: '/pages/backtest/backtest?strategyId=' + id
+    })
+  },
+
   // 模拟检查触发（实际应用中由后端定时检查）
   simulateCheck(e) {
     const { id } = e.currentTarget.dataset

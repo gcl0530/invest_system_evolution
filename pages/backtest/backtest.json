@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "策略回测",
+  "usingComponents": {
+    "backtest-chart": "../../components/backtest-chart/backtest-chart"
+  }
+}
