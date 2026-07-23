@@ -4,7 +4,7 @@
   <!-- 顶部栏 -->
   <view class="header" wx:if="{{!currentStock}}">
     <view class="header-title">股票关注</view>
-    <view class="header-action" bindtap="toggleSearch">
+    <view class="header-action" bind:tap="toggleSearch">
       <text style="font-size:40rpx">🔍</text>
     </view>
   </view>
@@ -23,7 +23,7 @@
         wx:key="code"
         data-code="{{item.code}}"
         data-market="{{item.market}}"
-        bindtap="addToWatchlist"
+        bind:tap="addToWatchlist"
       >
         <view class="flex-row items-center justify-between">
           <view class="flex-col">
@@ -49,7 +49,7 @@
       wx:key="code"
       data-code="{{item.code}}"
       data-market="{{item.market}}"
-      bindtap="selectStock"
+      bind:tap="selectStock"
     >
       <view class="flex-row justify-between items-center">
         <view class="flex-col" style="flex: 1;">
@@ -106,8 +106,8 @@
           <text class="detail-code">{{currentStock.code}} · {{currentStock.industry}}</text>
         </view>
         <view class="flex-row gap-sm">
-          <t-button theme="primary" size="small" variant="outline" bindtap="closeDetail">返回</t-button>
-          <t-button theme="danger" size="small" variant="outline" data-code="{{currentStock.code}}" bindtap="removeFromWatchlist">取消关注</t-button>
+          <t-button theme="primary" size="small" variant="outline" bind:tap="closeDetail">返回</t-button>
+          <t-button theme="danger" size="small" variant="outline" data-code="{{currentStock.code}}" bind:tap="removeFromWatchlist">取消关注</t-button>
         </view>
       </view>
       
@@ -168,7 +168,7 @@
         wx:for="{{['日K', '周K', '月K']}}" 
         wx:key="*this"
         data-value="{{item}}"
-        bindtap="onPeriodChange"
+        bind:tap="onPeriodChange"
       >{{item}}</view>
     </view>
 

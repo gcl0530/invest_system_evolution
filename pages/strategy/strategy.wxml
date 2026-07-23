@@ -3,9 +3,9 @@
 <view class="container">
   <!-- Tab 栏 -->
   <view class="tab-bar">
-    <view class="tab-item {{activeTab === 'list' ? 'active' : ''}}" data-value="list" bindtap="onTabChange">策略列表</view>
-    <view class="tab-item {{activeTab === 'create' ? 'active' : ''}}" data-value="create" bindtap="onTabChange">创建策略</view>
-    <view class="tab-item {{activeTab === 'pyramid' ? 'active' : ''}}" data-value="pyramid" bindtap="onTabChange">金字塔加仓</view>
+    <view class="tab-item {{activeTab === 'list' ? 'active' : ''}}" data-value="list" bind:tap="onTabChange">策略列表</view>
+    <view class="tab-item {{activeTab === 'create' ? 'active' : ''}}" data-value="create" bind:tap="onTabChange">创建策略</view>
+    <view class="tab-item {{activeTab === 'pyramid' ? 'active' : ''}}" data-value="pyramid" bind:tap="onTabChange">金字塔加仓</view>
   </view>
 
   <!-- ===== 策略列表 ===== -->
@@ -62,8 +62,8 @@
         </view>
         
         <view class="strategy-actions">
-          <t-button theme="primary" size="small" variant="outline" data-id="{{item.id}}" bindtap="simulateCheck">检查触发</t-button>
-          <t-button theme="danger" size="small" variant="outline" data-id="{{item.id}}" bindtap="deleteStrategy">删除</t-button>
+          <t-button theme="primary" size="small" variant="outline" data-id="{{item.id}}" bind:tap="simulateCheck">检查触发</t-button>
+          <t-button theme="danger" size="small" variant="outline" data-id="{{item.id}}" bind:tap="deleteStrategy">删除</t-button>
         </view>
       </view>
     </view>
@@ -92,8 +92,8 @@
       <view class="form-group">
         <text class="form-label">标的类型</text>
         <view class="type-selector">
-          <view class="type-option {{formData.targetType === 'stock' ? 'active' : ''}}" data-value="stock" bindtap="onTypeChange">股票</view>
-          <view class="type-option {{formData.targetType === 'fund' ? 'active' : ''}}" data-value="fund" bindtap="onTypeChange">基金</view>
+          <view class="type-option {{formData.targetType === 'stock' ? 'active' : ''}}" data-value="stock" bind:tap="onTypeChange">股票</view>
+          <view class="type-option {{formData.targetType === 'fund' ? 'active' : ''}}" data-value="fund" bind:tap="onTypeChange">基金</view>
         </view>
       </view>
 
@@ -130,7 +130,7 @@
               <text class="condition-title">
                 {{item.type === 'price_cross_ma' ? '均线交叉' : item.type === 'macd_cross' ? 'MACD金叉/死叉' : item.type === 'boll_breakout' ? '布林带突破' : item.type === 'rsi_over' ? 'RSI超买超卖' : item.type === 'volume_surge' ? '放量' : '目标价格'}}
               </text>
-              <t-icon name="close" size="32rpx" color="#5a5a70" data-id="{{item.id}}" bindtap="removeCondition" />
+              <t-icon name="close" size="32rpx" color="#5a5a70" data-id="{{item.id}}" bind:tap="removeCondition" />
             </view>
             
             <view class="condition-config">
@@ -148,7 +148,7 @@
       </view>
 
       <!-- 保存按钮 -->
-      <t-button theme="primary" size="large" block bindtap="saveStrategy" style="margin-top: 32rpx;">保存策略</t-button>
+      <t-button theme="primary" size="large" block bind:tap="saveStrategy" style="margin-top: 32rpx;">保存策略</t-button>
     </view>
   </view>
 

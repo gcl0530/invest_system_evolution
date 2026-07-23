@@ -10,7 +10,7 @@
     <view 
       class="level-item {{activeLevel === 'dao' ? 'active' : ''}}" 
       data-level="dao"
-      bindtap="onLevelChange"
+      bind:tap="onLevelChange"
       style="--level-color: #ffd54f;"
     >
       <text class="level-char">道</text>
@@ -19,7 +19,7 @@
     <view 
       class="level-item {{activeLevel === 'fa' ? 'active' : ''}}" 
       data-level="fa"
-      bindtap="onLevelChange"
+      bind:tap="onLevelChange"
       style="--level-color: #7c4dff;"
     >
       <text class="level-char">法</text>
@@ -28,7 +28,7 @@
     <view 
       class="level-item {{activeLevel === 'shu' ? 'active' : ''}}" 
       data-level="shu"
-      bindtap="onLevelChange"
+      bind:tap="onLevelChange"
       style="--level-color: #42a5f5;"
     >
       <text class="level-char">术</text>
@@ -37,7 +37,7 @@
     <view 
       class="level-item {{activeLevel === 'qi' ? 'active' : ''}}" 
       data-level="qi"
-      bindtap="onLevelChange"
+      bind:tap="onLevelChange"
       style="--level-color: #26a69a;"
     >
       <text class="level-char">器</text>
@@ -46,7 +46,7 @@
     <view 
       class="level-item {{activeLevel === 'shi' ? 'active' : ''}}" 
       data-level="shi"
-      bindtap="onLevelChange"
+      bind:tap="onLevelChange"
       style="--level-color: #ef5350;"
     >
       <text class="level-char">势</text>
@@ -67,8 +67,8 @@
           <view class="item-header">
             <text class="item-title" style="border-left-color: {{item.color}};">{{entry.title}}</text>
             <view class="item-actions">
-              <text class="action-btn" data-level="{{activeLevel}}" data-id="{{entry.id}}" bindtap="editItem">编辑</text>
-              <text class="action-btn danger" data-level="{{activeLevel}}" data-id="{{entry.id}}" bindtap="deleteItem">删除</text>
+              <text class="action-btn" data-level="{{activeLevel}}" data-id="{{entry.id}}" bind:tap="editItem">编辑</text>
+              <text class="action-btn danger" data-level="{{activeLevel}}" data-id="{{entry.id}}" bind:tap="deleteItem">删除</text>
             </view>
           </view>
           
@@ -81,8 +81,8 @@
               autosize
             />
             <view class="edit-actions">
-              <t-button size="small" theme="primary" bindtap="saveEdit">保存</t-button>
-              <t-button size="small" variant="outline" bindtap="cancelEdit">取消</t-button>
+              <t-button size="small" theme="primary" bind:tap="saveEdit">保存</t-button>
+              <t-button size="small" variant="outline" bind:tap="cancelEdit">取消</t-button>
             </view>
           </view>
           
@@ -96,7 +96,7 @@
     
     <!-- 添加按钮 -->
     <view class="add-section">
-      <t-button theme="primary" variant="outline" block bindtap="showAdd">+ 添加条目</t-button>
+      <t-button theme="primary" variant="outline" block bind:tap="showAdd">+ 添加条目</t-button>
     </view>
   </view>
 
@@ -105,7 +105,7 @@
     <view class="add-popup">
       <view class="popup-header">
         <text class="popup-title">添加新条目</text>
-        <text class="popup-close" bindtap="hideAdd">关闭</text>
+        <text class="popup-close" bind:tap="hideAdd">关闭</text>
       </view>
       <view class="popup-form">
         <view class="form-group">
@@ -121,7 +121,7 @@
             autosize
           />
         </view>
-        <t-button theme="primary" block bindtap="addItem" style="margin-top: 24rpx;">确认添加</t-button>
+        <t-button theme="primary" block bind:tap="addItem" style="margin-top: 24rpx;">确认添加</t-button>
       </view>
     </view>
   </t-popup>
