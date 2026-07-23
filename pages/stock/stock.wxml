@@ -50,6 +50,7 @@
       data-code="{{item.code}}"
       data-market="{{item.market}}"
       bind:tap="selectStock"
+      bind:longpress="removeFromWatchlist"
     >
       <view class="flex-row justify-between items-center">
         <view class="flex-col" style="flex: 1;">

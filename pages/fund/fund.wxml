@@ -48,6 +48,7 @@
       wx:key="code"
       data-code="{{item.code}}"
       bind:tap="selectFund"
+      bind:longpress="removeFromWatchlist"
     >
       <view class="flex-row justify-between items-center">
         <view class="flex-col" style="flex: 1;">

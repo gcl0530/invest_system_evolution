@@ -104,13 +104,29 @@ Page({
   removeFromWatchlist(e) {
     const { code } = e.currentTarget.dataset
     const watchlist = app.globalData.watchlistFunds
-    const idx = watchlist.findIndex(f => f.code === code)
-    if (idx >= 0) {
-      watchlist.splice(idx, 1)
-      app.saveWatchlist()
-      this.initWatchlist()
-      wx.showToast({ title: '已移除关注', icon: 'success' })
+    const fund = watchlist.find(f => f.code === code)
+    if (!fund) {
+      wx.showToast({ title: '未找到该基金', icon: 'none' })
+      return
     }
+    wx.showModal({
+      title: '取消关注',
+      content: `确定取消关注 ${fund.name || fund.code}？`,
+      success: (res) => {
+        if (res.confirm) {
+          const idx = watchlist.findIndex(f => f.code === code)
+          if (idx >= 0) {
+            watchlist.splice(idx, 1)
+            app.saveWatchlist()
+            this.initWatchlist()
+            if (this.data.currentFund && this.data.currentFund.code === code) {
+              this.setData({ currentFund: null, fundDetail: null })
+            }
+            wx.showToast({ title: '已移除关注', icon: 'success' })
+          }
+        }
+      }
+    })
   },
 
   // 选中基金查看详情

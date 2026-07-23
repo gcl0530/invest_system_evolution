@@ -88,13 +88,30 @@ Page({
   removeFromWatchlist(e) {
     const { code } = e.currentTarget.dataset
     const watchlist = app.globalData.watchlistStocks
-    const idx = watchlist.findIndex(s => s.code === code)
-    if (idx >= 0) {
-      watchlist.splice(idx, 1)
-      app.saveWatchlist()
-      this.initWatchlist()
-      wx.showToast({ title: '已移除关注', icon: 'success' })
+    const stock = watchlist.find(s => s.code === code)
+    if (!stock) {
+      wx.showToast({ title: '未找到该股票', icon: 'none' })
+      return
     }
+    wx.showModal({
+      title: '取消关注',
+      content: `确定取消关注 ${stock.name || stock.code}？`,
+      success: (res) => {
+        if (res.confirm) {
+          const idx = watchlist.findIndex(s => s.code === code)
+          if (idx >= 0) {
+            watchlist.splice(idx, 1)
+            app.saveWatchlist()
+            this.initWatchlist()
+            // 如果详情页显示的就是这只，关掉详情页
+            if (this.data.currentStock && this.data.currentStock.code === code) {
+              this.setData({ currentStock: null, stockDetail: null })
+            }
+            wx.showToast({ title: '已移除关注', icon: 'success' })
+          }
+        }
+      }
+    })
   },
 
   selectStock(e) {
