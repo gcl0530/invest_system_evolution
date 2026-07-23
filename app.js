@@ -51,10 +51,9 @@ App({
   },
 
   onLaunch() {
-    // 云开发初始化（开通云开发后：在 utils/config.js 把 USE_CLOUD 改 true + 填 CLOUD_ENV_ID）
-    // 游客模式/未开通时不 init，避免 cloud init error 噪声
-    const { USE_CLOUD, CLOUD_ENV_ID } = require('./utils/config')
-    if (USE_CLOUD && wx.cloud) {
+    // 云开发初始化（任一分类开关开启时初始化）
+    const { USE_CLOUD, STOCK_USE_CLOUD, FUND_USE_CLOUD, CLOUD_ENV_ID } = require('./utils/config')
+    if ((USE_CLOUD || STOCK_USE_CLOUD || FUND_USE_CLOUD) && wx.cloud) {
       try {
         wx.cloud.init({ env: CLOUD_ENV_ID, traceUser: true })
       } catch (e) {

@@ -6,10 +6,13 @@
 // app.js 的 cloud.init 与各 service 的数据访问都读这里，一处修改全局生效。
 
 module.exports = {
-  // 云开发开关：false=走本地 mock 数据，true=走云函数
-  // 游客模式(touristappid)必须为 false，否则 wx.cloud.init 会报错
+  // 全局云开发开关（false=本地 mock）
   USE_CLOUD: false,
 
-  // 云环境ID（开通云开发后在「云开发控制台」获取，形如 cloud1-2g5abc...）
-  CLOUD_ENV_ID: 'your-env-id'
+  // 分类开关：股票已接真实数据（腾讯财经），基金暂用 mock
+  STOCK_USE_CLOUD: true,
+  FUND_USE_CLOUD: false,
+
+  // 云环境ID（已开通：cloudbase-d2go9p6ina9b57e2b）
+  CLOUD_ENV_ID: 'cloudbase-d2go9p6ina9b57e2b'
 }
