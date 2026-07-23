@@ -9,9 +9,9 @@ module.exports = {
   // 全局云开发开关（false=本地 mock）
   USE_CLOUD: false,
 
-  // 分类开关：股票已接真实数据（腾讯财经），基金暂用 mock
+  // 分类开关：股票走真实数据（腾讯财经，支持A股/港股/美股），基金走真实数据（天天基金净值）
   STOCK_USE_CLOUD: true,
-  FUND_USE_CLOUD: false,
+  FUND_USE_CLOUD: true,
 
   // 云环境ID（已开通：cloudbase-d2go9p6ina9b57e2b）
   CLOUD_ENV_ID: 'cloudbase-d2go9p6ina9b57e2b'

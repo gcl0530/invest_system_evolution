@@ -22,7 +22,7 @@ Page({
   onShow() {
     this.initWatchlist()
     if (this.data.currentStock) {
-      this.loadStockDetail(this.data.currentStock.code, this.data.period)
+      this.loadStockDetail(this.data.currentStock.code, this.data.period, this.data.currentStock.market)
     }
   },
 
@@ -31,9 +31,9 @@ Page({
     if (watchlist.length === 0) {
       watchlist = await stockService.getStockList()
     }
-    // 真实数据模式下，批量刷新关注列表价格
-    const codes = watchlist.map(s => s.code)
-    const quotes = await stockService.getBatchQuotes(codes)
+    // 真实数据模式下，批量刷新关注列表价格（传 {code, market} 支持港股/美股）
+    const items = watchlist.map(s => ({ code: s.code, market: s.market }))
+    const quotes = await stockService.getBatchQuotes(items)
     if (quotes.length > 0) {
       watchlist = watchlist.map(s => {
         const q = quotes.find(x => x.code === s.code)
@@ -68,12 +68,13 @@ Page({
   },
 
   addToWatchlist(e) {
-    const { code } = e.currentTarget.dataset
+    const { code, market } = e.currentTarget.dataset
     const stock = this.data.searchResults.find(s => s.code === code)
     if (stock) {
       const watchlist = app.globalData.watchlistStocks
       if (!watchlist.find(s => s.code === code)) {
-        watchlist.push(stock)
+        // 存储时带 market（港股/美股点进去要走对应市场接口）
+        watchlist.push({ ...stock, market: stock.market || market })
         app.saveWatchlist()
         wx.showToast({ title: '已添加关注', icon: 'success' })
         this.setData({ showSearch: false, searchValue: '', searchResults: [] })
@@ -97,16 +98,16 @@ Page({
   },
 
   selectStock(e) {
-    const { code } = e.currentTarget.dataset
+    const { code, market } = e.currentTarget.dataset
     this.setData({ showSearch: false, searchValue: '', searchResults: [] })
-    this.loadStockDetail(code, this.data.period)
+    this.loadStockDetail(code, this.data.period, market)
   },
 
-  async loadStockDetail(code, period) {
+  async loadStockDetail(code, period, market) {
     this.setData({ loading: true })
     wx.showLoading({ title: '加载中...' })
     try {
-      const detail = await stockService.getStockDetail(code, period)
+      const detail = await stockService.getStockDetail(code, period, market)
       if (detail) {
         this.setData({
           currentStock: detail,
@@ -128,7 +129,7 @@ Page({
     const val = e.detail.value || e.currentTarget.dataset.value
     this.setData({ period: val })
     if (this.data.currentStock) {
-      this.loadStockDetail(this.data.currentStock.code, val)
+      this.loadStockDetail(this.data.currentStock.code, val, this.data.currentStock.market)
     }
   },
 

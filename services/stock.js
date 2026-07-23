@@ -1,5 +1,5 @@
 // services/stock.js - 股票数据访问层
-// USE_CLOUD=false 走本地 mock；true 走云函数（appid 开通云开发后切换）
+// STOCK_USE_CLOUD=false 走本地 mock；true 走云函数（腾讯财经，支持A股/港股/美股）
 const { callCloud } = require('../utils/request')
 const { STOCK_USE_CLOUD } = require('../utils/config')
 const mock = require('../mock/data')
@@ -7,12 +7,10 @@ const { calcMA, calcBOLL, calcMACD, calcRSI, calcKDJ } = require('../utils/indic
 
 /**
  * 获取股票列表
- * @returns {Promise<Array>}
  */
 async function getStockList() {
   if (STOCK_USE_CLOUD) {
     const list = await callCloud('stock', { action: 'getList' })
-    // 云函数返回空时 fallback mock 默认列表（code 是真实的，详情走真实数据）
     return (list && list.length > 0) ? list : mock.mockStocks
   }
   return mock.mockStocks
@@ -21,12 +19,12 @@ async function getStockList() {
 /**
  * 获取股票详情（含K线+指标）
  * @param {string} code - 股票代码
- * @returns {Promise<object>}
+ * @param {string} period - 周期 日K/周K/月K
+ * @param {string} market - 市场 sh/sz/hk/us
  */
-async function getStockDetail(code, period) {
+async function getStockDetail(code, period, market) {
   if (STOCK_USE_CLOUD) {
-    const raw = await callCloud('stock', { action: 'getDetail', code, period })
-    // 云函数返回 { ...info, kline }，本地计算技术指标
+    const raw = await callCloud('stock', { action: 'getDetail', code, period, market })
     const closes = raw.kline.map(k => k.close)
     const highs = raw.kline.map(k => k.high)
     const lows = raw.kline.map(k => k.low)
@@ -48,26 +46,26 @@ async function getStockDetail(code, period) {
 }
 
 /**
- * 搜索股票
- * @param {string} keyword
- * @returns {Promise<Array>}
+ * 搜索股票（返回带 market 字段）
  */
 async function searchStock(keyword) {
   const kw = String(keyword || '').trim()
   if (!kw) return []
   if (STOCK_USE_CLOUD) {
     const list = await callCloud('stock', { action: 'search', keyword })
-    // 云函数搜索暂未实现，fallback mock 模糊匹配（能搜到 3 只示例股票）
     return (list && list.length > 0) ? list : mock.mockStocks.filter(s => s.name.includes(kw) || s.code.includes(kw))
   }
   return mock.mockStocks.filter(s => s.name.includes(kw) || s.code.includes(kw))
 }
 
-// 批量拉取关注列表的真实行情
-async function getBatchQuotes(codes) {
-  if (!STOCK_USE_CLOUD || !codes || codes.length === 0) return []
+/**
+ * 批量拉取关注列表的实时行情
+ * @param {Array} items - [{code, market}] 或 [code]
+ */
+async function getBatchQuotes(items) {
+  if (!STOCK_USE_CLOUD || !items || items.length === 0) return []
   try {
-    const quotes = await callCloud('stock', { action: 'getList', codes })
+    const quotes = await callCloud('stock', { action: 'getList', codes: items })
     return quotes || []
   } catch (err) {
     console.error('[getBatchQuotes]', err)

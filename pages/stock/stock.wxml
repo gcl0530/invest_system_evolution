@@ -22,6 +22,7 @@
         wx:for="{{searchResults}}" 
         wx:key="code"
         data-code="{{item.code}}"
+        data-market="{{item.market}}"
         bindtap="addToWatchlist"
       >
         <view class="flex-row items-center justify-between">
@@ -47,6 +48,7 @@
       wx:for="{{watchlist}}" 
       wx:key="code"
       data-code="{{item.code}}"
+      data-market="{{item.market}}"
       bindtap="selectStock"
     >
       <view class="flex-row justify-between items-center">

@@ -43,8 +43,17 @@ Page({
   async initWatchlist() {
     let watchlist = app.globalData.watchlistFunds
     if (watchlist.length === 0) {
-      // 首次进入，用 service 拉默认列表（mock 模式返回 mockFunds）
+      // 首次进入，用 service 拉默认列表
       watchlist = await fundService.getFundList()
+    }
+    // 真实数据模式下，批量刷新关注列表实时估值
+    const codes = watchlist.map(f => f.code)
+    const quotes = await fundService.getBatchFundGz(codes)
+    if (quotes.length > 0) {
+      watchlist = watchlist.map(f => {
+        const q = quotes.find(x => x.code === f.code)
+        return q ? { ...f, ...q } : f
+      })
     }
     this.setData({
       watchlist: watchlist.map(f => ({

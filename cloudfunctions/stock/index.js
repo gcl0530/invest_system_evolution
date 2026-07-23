@@ -1,14 +1,34 @@
-// cloudfunctions/stock/index.js - 股票数据云函数（真实行情，调腾讯财经+东方财富接口）
+// cloudfunctions/stock/index.js - 股票数据云函数（真实行情，调腾讯财经+东方财富，支持A股/港股/美股）
 const cloud = require('wx-server-sdk')
 const https = require('https')
 const iconv = require('iconv-lite')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
-// 股票代码转腾讯格式：6开头沪市(sh)，0/3开头深市(sz)
-function toTxCode(code) {
+// 根据 code + market 返回腾讯格式
+// market: 'sh' 沪A, 'sz' 深A, 'hk' 港股, 'us' 美股
+function toTxCode(code, market) {
+  code = String(code)
+  if (market === 'hk') return 'hk' + code.padStart(5, '0')
+  if (market === 'us') return 'us' + code
+  if (market === 'sh') return 'sh' + code
+  if (market === 'sz') return 'sz' + code
+  // 兜底：market 未提供时按 code 开头判断 A 股市场
   if (code.startsWith('6')) return 'sh' + code
   if (code.startsWith('0') || code.startsWith('3')) return 'sz' + code
   return 'sh' + code
+}
+
+// 根据 SecurityTypeName 推断 market（东方财富搜索结果字段，形如"沪A/深A/港股/美股"）
+function guessMarket(securityTypeName, code) {
+  const name = String(securityTypeName || '')
+  if (name.includes('港')) return 'hk'
+  if (name.includes('美')) return 'us'
+  if (name.includes('沪')) return 'sh'
+  if (name.includes('深')) return 'sz'
+  // 兜底：按 code 开头
+  if (code.startsWith('6')) return 'sh'
+  if (code.startsWith('0') || code.startsWith('3')) return 'sz'
+  return 'sh'
 }
 
 // 周期映射
@@ -73,7 +93,7 @@ async function fetchQuote(txCode) {
   }
 }
 
-// 批量拉取实时行情（一次请求多只股票，腾讯支持批量）
+// 批量拉取实时行情
 async function fetchBatchQuotes(txCodes) {
   const gbkStr = await fetchGbk(`https://qt.gtimg.cn/q=${txCodes.join(',')}`)
   const result = []
@@ -119,20 +139,20 @@ function parseKLine(txData, txCode, txPeriod) {
   }))
 }
 
-// 东方财富搜索（返回 JSON，格式明确）
+// 东方财富搜索（返回带 market 字段，支持 A 股/港股/美股）
 async function searchEastMoney(keyword) {
-  const url = `https://searchapi.eastmoney.com/api/suggest/get?input=${encodeURIComponent(keyword)}&type=14&count=10&token=D43BF722C8E33BDC906FB84D85E326E8`
+  const url = `https://searchapi.eastmoney.com/api/suggest/get?input=${encodeURIComponent(keyword)}&type=14&count=15&token=D43BF722C8E33BDC906FB84D85E326E8`
   const data = await fetchJson(url)
-  // 返回结构 { QuotationCodeTable: { Data: [...] } }，注意不是顶层 Data
   const table = data.QuotationCodeTable || {}
-  // 只保留 A 股（沪深），港股/美股接口格式不同（腾讯用 hk/us 前缀，A股用 sh/sz），暂不支持
-  const list = (table.Data || [])
-    .filter(item => (item.SecurityTypeName || '').includes('A'))
-    .map(item => ({
+  const list = (table.Data || []).map(item => {
+    const market = guessMarket(item.SecurityTypeName, item.Code)
+    return {
       code: item.Code,
       name: item.Name,
+      market,
       industry: item.SecurityTypeName || ''
-    }))
+    }
+  })
   return list
 }
 
@@ -142,8 +162,8 @@ exports.main = async (event, context) => {
 
   switch (action) {
     case 'getDetail': {
-      const { code, period } = event
-      const txCode = toTxCode(code)
+      const { code, period, market } = event
+      const txCode = toTxCode(code, market)
       const txPeriod = toTxPeriod(period)
       try {
         const [txData, quote] = await Promise.all([
@@ -152,7 +172,7 @@ exports.main = async (event, context) => {
         ])
         const kline = parseKLine(txData, txCode, txPeriod)
         const info = quote || { code, name: code, price: 0 }
-        return { code: 0, data: { ...info, kline } }
+        return { code: 0, data: { ...info, kline, market } }
       } catch (err) {
         console.error('[stock:getDetail]', err)
         return { code: -1, message: '获取股票数据失败: ' + err.message }
@@ -160,11 +180,14 @@ exports.main = async (event, context) => {
     }
 
     case 'getList': {
-      // 批量拉取关注列表的真实行情（codes 从页面传入）
+      // codes 支持 ['600519']（纯 code，走兜底判断 A 股）或 [{code, market}]（带市场）
       const { codes } = event
       if (!codes || codes.length === 0) return { code: 0, data: [] }
       try {
-        const txCodes = codes.map(toTxCode)
+        const txCodes = codes.map(c => {
+          if (typeof c === 'string') return toTxCode(c, null)
+          return toTxCode(c.code, c.market)
+        })
         const quotes = await fetchBatchQuotes(txCodes)
         return { code: 0, data: quotes }
       } catch (err) {
