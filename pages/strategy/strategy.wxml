@@ -37,7 +37,7 @@
             </view>
             <text class="strategy-code">{{item.targetCode}} · {{item.targetType === 'stock' ? '股票' : '基金'}}</text>
           </view>
-          <t-switch checked="{{item.enabled}}" data-id="{{item.id}}" bind:change="toggleStrategy" />
+          <t-switch checked="{{item.enabled === true}}" data-id="{{item.id}}" bind:change="toggleStrategy" />
         </view>
         
         <view class="strategy-conditions">

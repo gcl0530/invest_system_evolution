@@ -100,8 +100,15 @@ App({
   // 加载策略
   loadStrategies() {
     try {
-      const strategies = wx.getStorageSync('strategies')
-      if (strategies) this.globalData.strategies = strategies
+      let strategies = wx.getStorageSync('strategies')
+      if (strategies) {
+        // 强制转换 enabled 为布尔值（Storage 可能存成字符串）
+        strategies = strategies.map(s => ({
+          ...s,
+          enabled: s.enabled === true || s.enabled === 'true' || s.enabled === 1
+        }))
+        this.globalData.strategies = strategies
+      }
     } catch (e) {
       console.error('加载策略失败:', e)
     }
