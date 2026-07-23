@@ -153,8 +153,9 @@ exports.main = async (event, context) => {
                 dayChange: last ? (last.equityReturn || 0) : 0,
                 navDate: last ? formatDate(last.x) : '',
                 estimatedNav: 0,
-                weekChange: 0,
-                monthChange: 0
+                // 周/月涨跌幅基于 klineRaw 真实净值计算（5 个交易日≈1周，22 个交易日≈1月）
+                weekChange: (arr.length > 5 && last && arr[arr.length - 6].y > 0) ? Math.round((last.y - arr[arr.length - 6].y) / arr[arr.length - 6].y * 10000) / 100 : 0,
+                monthChange: (arr.length > 22 && last && arr[arr.length - 23].y > 0) ? Math.round((last.y - arr[arr.length - 23].y) / arr[arr.length - 23].y * 10000) / 100 : 0
               }
             } catch (e) {
               const defaultFund = DEFAULT_FUNDS.find(f => f.code === code)
