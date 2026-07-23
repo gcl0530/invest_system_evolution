@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "策略回测",
   "usingComponents": {
-    "backtest-chart": "../../components/backtest-chart/backtest-chart"
+    "backtest-chart": "../../components/backtest-chart/backtest-chart",
+    "t-stepper": "tdesign-miniprogram/stepper/stepper"
   }
 }

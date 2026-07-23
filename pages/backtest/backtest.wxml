@@ -83,14 +83,14 @@
       <view class="param-row">
         <text class="param-label">止损比例</text>
         <view class="param-control">
-          <t-stepper class="backtest-stepper" value="{{stopLossRatio}}" step="1" min="1" max="20" bind:change="onStopLossChange" />
+          <t-stepper class="backtest-stepper" value="{{stopLossRatio + ''}}" step="1" min="1" max="20" bind:change="onStopLossChange" theme="filled" />
           <text class="param-unit">%</text>
         </view>
       </view>
       <view class="param-row">
         <text class="param-label">止盈比例</text>
         <view class="param-control">
-          <t-stepper class="backtest-stepper" value="{{takeProfitRatio}}" step="1" min="5" max="50" bind:change="onTakeProfitChange" />
+          <t-stepper class="backtest-stepper" value="{{takeProfitRatio + ''}}" step="1" min="5" max="50" bind:change="onTakeProfitChange" theme="filled" />
           <text class="param-unit">%</text>
         </view>
       </view>
