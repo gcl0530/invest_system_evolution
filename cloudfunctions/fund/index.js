@@ -141,11 +141,11 @@ exports.main = async (event, context) => {
         const results = await Promise.all(
           targetCodes.map(async code => {
             const gz = await fetchFundGz(code)
-            const default = DEFAULT_FUNDS.find(f => f.code === code)
+            const defaultFund = DEFAULT_FUNDS.find(f => f.code === code)
             return {
               code,
-              name: (gz && gz.name) || (default && default.name) || code,
-              type: (default && default.type) || '混合型',
+              name: (gz && gz.name) || (defaultFund && defaultFund.name) || code,
+              type: (defaultFund && defaultFund.type) || '混合型',
               netValue: (gz && gz.netValue) || 0,
               dayChange: (gz && gz.dayChange) || 0,
               navDate: (gz && gz.navDate) || '',
