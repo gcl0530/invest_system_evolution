@@ -55,6 +55,7 @@
         <view 
           class="type-option {{periodIndex === idx ? 'active' : ''}}" 
           wx:for="{{periodOptions}}" 
+          wx:key="*this"
           wx:for-item="opt" 
           wx:for-index="idx"
           data-idx="{{idx}}"

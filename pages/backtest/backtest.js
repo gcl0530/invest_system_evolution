@@ -69,9 +69,9 @@ Page({
       this.setData({
         selectedStrategyId: id,
         selectedStrategy: strategy,
-        targetType: strategy.targetType,
-        targetCode: strategy.targetCode,
-        usePyramid: strategy.pyramidEnabled,
+        targetType: strategy.targetType || 'stock',
+        targetCode: strategy.targetCode || '',
+        usePyramid: strategy.pyramidEnabled || false,
         capital: strategy.capital || 100000
       })
     }
@@ -184,10 +184,28 @@ Page({
     try {
       // 拉取历史K线数据
       let detail
-      if (targetType === 'stock') {
-        detail = await stockService.getStockDetail(targetCode, period)
-      } else {
-        detail = await fundService.getFundDetail(targetCode, period)
+      try {
+        if (targetType === 'stock') {
+          detail = await stockService.getStockDetail(targetCode, period)
+        } else {
+          detail = await fundService.getFundDetail(targetCode, period)
+        }
+      } catch (fetchErr) {
+        console.warn('K线拉取失败，尝试模拟数据', fetchErr)
+        wx.showModal({
+          title: '数据拉取失败',
+          content: '云函数获取' + (targetType === 'stock' ? '股票' : '基金') + '数据失败。是否使用模拟数据运行回测？',
+          confirmText: '使用模拟数据',
+          cancelText: '取消',
+          success: async (res) => {
+            if (res.confirm) {
+              this.runMockBacktest(conditions, usePyramid, capital, stopLossRatio, takeProfitRatio)
+            } else {
+              this.setData({ loading: false })
+            }
+          }
+        })
+        return
       }
 
       if (!detail || !detail.kline || detail.kline.length < 70) {
@@ -228,6 +246,65 @@ Page({
       wx.showToast({ title: '回测失败: ' + (err.message || '未知错误'), icon: 'none' })
       this.setData({ loading: false })
     }
+  },
+
+  // 生成模拟K线数据
+  generateMockKline(code, days) {
+    const kline = []
+    let basePrice = 50 + Math.random() * 100
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - days)
+
+    for (let i = 0; i < days; i++) {
+      const date = new Date(startDate)
+      date.setDate(startDate.getDate() + i)
+      const dateStr = date.toISOString().slice(0, 10)
+
+      // 模拟趋势 + 噪声
+      const trend = i < days / 3 ? 0.002 : (i < days * 2 / 3 ? -0.001 : 0.0015)
+      const noise = (Math.random() - 0.5) * 0.04
+      const change = trend + noise
+      const open = basePrice
+      const close = basePrice * (1 + change)
+      const high = Math.max(open, close) * (1 + Math.random() * 0.02)
+      const low = Math.min(open, close) * (1 - Math.random() * 0.02)
+      const volume = Math.floor(500000 + Math.random() * 1500000)
+
+      kline.push({ date: dateStr, open, high, low, close, volume })
+      basePrice = close
+    }
+    return kline
+  },
+
+  // 模拟数据回测
+  runMockBacktest(conditions, usePyramid, capital, stopLossRatio, takeProfitRatio) {
+    const kline = this.generateMockKline('MOCK', 250)
+
+    const pyramidConfig = {
+      ...DEFAULT_PYRAMID,
+      totalCapital: capital,
+      stopLossRatio: -stopLossRatio / 100,
+      takeProfitRatio: takeProfitRatio / 100
+    }
+
+    const result = runBacktest({
+      kline,
+      conditions,
+      pyramidConfig,
+      usePyramid,
+      capital,
+      startIndex: 60
+    })
+
+    const summary = buildBacktestSummary(result)
+
+    this.setData({
+      result,
+      summary,
+      loading: false
+    })
+
+    wx.showToast({ title: '模拟数据回测完成', icon: 'success' })
   },
 
   // 分享

@@ -9,6 +9,8 @@
     "t-switch": "tdesign-miniprogram/switch/switch",
     "t-stepper": "tdesign-miniprogram/stepper/stepper",
     "t-picker": "tdesign-miniprogram/picker/picker",
-    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar"
+    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar",
+    "t-popup": "tdesign-miniprogram/popup/popup",
+    "t-cell": "tdesign-miniprogram/cell/cell"
   }
 }

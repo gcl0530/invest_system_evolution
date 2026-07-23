@@ -308,6 +308,33 @@
   margin-top: 4rpx;
 }
 
+/* 条件选择弹窗 */
+.condition-popup {
+  background-color: #1a1a2e;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 24rpx 0;
+}
+
+.popup-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32rpx 24rpx;
+  border-bottom: 1rpx solid #2a2a4a;
+}
+
+.popup-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #e8e8f0;
+}
+
+.condition-options {
+  max-height: 600rpx;
+  overflow-y: auto;
+}
+
 /* 金字塔配置 */
 .pyramid-config {
   display: flex;

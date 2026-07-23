@@ -116,13 +116,7 @@
       <view class="form-group">
         <view class="flex-row justify-between items-center">
           <text class="form-label">触发条件</text>
-          <t-picker
-            value="{{0}}"
-            options="{{conditionTypes}}"
-            bind:change="onConditionTypeChange"
-          >
-            <t-button size="small" variant="outline" theme="primary">添加条件</t-button>
-          </t-picker>
+          <t-button size="small" variant="outline" theme="primary" bind:tap="showConditionPicker">添加条件</t-button>
         </view>
         
         <view class="condition-list">
@@ -240,3 +234,22 @@
     </view>
   </view>
 </view>
+
+<!-- 条件类型选择弹窗 -->
+<t-popup visible="{{showConditionPopup}}" placement="bottom" bind:visible-change="onConditionPopupClose">
+  <view class="condition-popup">
+    <view class="popup-header">
+      <text class="popup-title">选择条件类型</text>
+      <t-icon name="close" size="40rpx" color="#5a5a70" bind:tap="closeConditionPopup" />
+    </view>
+    <view class="condition-options">
+      <t-cell 
+        wx:for="{{conditionTypes}}" 
+        wx:key="value"
+        title="{{item.label}}" 
+        data-value="{{item.value}}"
+        bind:tap="onConditionSelect"
+      />
+    </view>
+  </view>
+</t-popup>

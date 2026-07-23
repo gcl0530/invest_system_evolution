@@ -39,7 +39,10 @@ Page({
     ],
     
     // 提醒记录
-    alerts: []
+    alerts: [],
+
+    // 弹窗状态
+    showConditionPopup: false
   },
 
   onLoad() {
@@ -98,7 +101,40 @@ Page({
     this.setData({ 'formData.pyramidEnabled': e.detail.value })
   },
 
-  // 添加条件
+  // 显示条件选择弹窗
+  showConditionPicker() {
+    this.setData({ showConditionPopup: true })
+  },
+
+  closeConditionPopup() {
+    this.setData({ showConditionPopup: false })
+  },
+
+  onConditionPopupClose(e) {
+    this.setData({ showConditionPopup: e.detail.visible })
+  },
+
+  // 选择条件类型
+  onConditionSelect(e) {
+    const condType = e.currentTarget.dataset.value
+    const newCondition = {
+      id: Date.now(),
+      type: condType,
+      direction: 'up',
+      action: 'notify',
+      ma: 'MA20',
+      threshold: 70,
+      volumeRatio: 2,
+      targetPrice: 0,
+      pyramidLayer: null
+    }
+    this.setData({
+      'formData.conditions': [...this.data.formData.conditions, newCondition],
+      showConditionPopup: false
+    })
+  },
+
+  // 添加条件（旧picker方式，保留兼容）
   onConditionTypeChange(e) {
     const idx = e.detail.value
     const condType = this.data.conditionTypes[idx].value

@@ -107,6 +107,19 @@
   color: #5a5a70;
 }
 
+/* Stepper 数字强制可见（黑背景场景） */
+.t-stepper__input {
+  color: #e8e8f0 !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.t-stepper__minus,
+.t-stepper__plus {
+  color: #e8e8f0 !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 /* 条件预览 */
 .conditions-preview {
   display: flex;
